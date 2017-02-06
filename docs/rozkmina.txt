@@ -1,8 +1,0 @@
-1. Trzeba wyeliminowac podwojone linie:
-
-	sprawdzić odległość punktów krańcowych odcinków(albo całych odcinków) od pozostałych odcinków - jeśli są blisko to odrzucić np. krótszy odcinek.
-	dozwolona odległość jako parametr
-	
-2. Kazdemu czarnemu punktowi zdefiniowac przynaleznosc do danej linii? i wyswietlic ilosc konfliktow dla danej wielkosci obszaru linii? Dobrac taką wartość żeby było mało konfliktów i już spoko?
-
-Rozrzut wokol linii liczyc tylko prostopadle do danego pixela linii? Lub zdefiniować proste równoległe jako granice? 
