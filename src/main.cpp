@@ -25,7 +25,9 @@ int const max_lowThreshold = 300;
 int ratio = 3;
 int kernel_size = 3;
 int kolor = 25;
-char* window_name = "Edge Map";
+string str = "Edge Map";//allowed conversion
+const char* window_name = str.c_str();
+
 int ANALYSED_PX = 0;
 
 void callFunctions(int width)
