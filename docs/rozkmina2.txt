@@ -1,0 +1,76 @@
+Czyli jak znajdzie kierunek pixeli, to niech nie bierze tego do liczenia odchylenia tylko
+	najpierw szuka to okreslonej odleglosci w jednym i drugim kierunku, zapisze sobie
+	polozenia znalezionych pixeli, wyliczy z nich srednio i dopiero okresli ich odchylenie 
+	od sredniej. Niech też w punkcie średniej narysuje pixel.		
+	
+	Aktualnie mam:
+	- zapis polozen pixeli, np.
+		pointsArray[0] = [6, 145]
+		pointsArray[1] = [7, 145]
+		pointsArray[2] = [-1, -1]
+		pointsArray[3] = [-1, -1]
+		pointsArray[4] = [-1, -1]
+		pointsArray[5] = [-1, -1]
+		pointsArray[6] = [-1, -1]
+		pointsArray[7] = [5, 145]
+		pointsArray[8] = [-1, -1]
+		pointsArray[9] = [-1, -1]
+		pointsArray[10] = [-1, -1]
+		pointsArray[11] = [-1, -1]
+		pointsArray[12] = [-1, -1]
+
+	- odpowiednio obliczyc srednia... i odchylenie od niej - mam srednia, sprawdzic wzor na odchylenie i ja uwzglednic
+	
+		pointsArray[0] = [0, 0]
+		pointsArray[1] = [-1, -1]
+		pointsArray[2] = [-1, -1]
+		pointsArray[3] = [-1, -1]
+		pointsArray[4] = [-1, -1]
+		pointsArray[5] = [-1, -1]
+		pointsArray[6] = [-1, -1]
+		pointsArray[7] = [-1, -1]
+		pointsArray[8] = [-1, -1]
+		pointsArray[9] = [-1, -1]
+		pointsArray[10] = [-1, -1]
+		pointsArray[11] = [-1, -1]
+		pointsArray[12] = [-1, -1]
+		Mean point is [0, 0]
+		pointsArray[0] = [4, 301]
+		pointsArray[1] = [-1, -1]
+		pointsArray[2] = [-1, -1]
+		pointsArray[3] = [-1, -1]
+		pointsArray[4] = [-1, -1]
+		pointsArray[5] = [-1, -1]
+		pointsArray[6] = [-1, -1]
+		pointsArray[7] = [-1, -1]
+		pointsArray[8] = [-1, -1]
+		pointsArray[9] = [-1, -1]
+		pointsArray[10] = [-1, -1]
+		pointsArray[11] = [-1, -1]
+		pointsArray[12] = [-1, -1]
+		Mean point is [4, 301]
+
+		pointsArray[0] = [6, 127]
+		pointsArray[1] = [-1, -1]
+		pointsArray[2] = [-1, -1]
+		pointsArray[3] = [-1, -1]
+		pointsArray[4] = [-1, -1]
+		pointsArray[5] = [-1, -1]
+		pointsArray[6] = [-1, -1]
+		pointsArray[7] = [-1, -1]
+		pointsArray[8] = [4, 127]
+		pointsArray[9] = [-1, -1]
+		pointsArray[10] = [2, 127]
+		pointsArray[11] = [1, 127]
+		pointsArray[12] = [-1, -1]
+		!!!!!!!!!!!!Mean point is [3, 127]
+
+- Aktualny problem:
+		Rysowane punkty uśrednione wyglądają bez sensu
+		- czy szukam w obu kierunkach?
+		-tak
+		-CO SIE DZIEJE GDY SPRAWDZE PIXEL POZA MAPĄ NA SKRAJU???!!! - DONE
+		- nie koloruje się pixel wstepnie uznany za usredniony - line 378! I w ogóle to punkty średnie nie zgadzają się
+			z pulą przeanalizowanych pixeli.
+	   -zeby rozwiazac powyzszy probelm uzywam funkcji waitkey i zamierzam zrobic powiekszenie na mape
+	   - po poprawkach coś nie dziala analiza we wstecznym kierunku
