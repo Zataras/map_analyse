@@ -135,7 +135,9 @@ int main( int argc, char* argv[] )
 	//Gray pixels to black:
 	//Gr2Bl(src_gray, src_gray3, 205);
 
-	showResized(src, "powiekszone", 1.0);
+	//testing:
+	showResized(src, "powiekszone", 3.0);
+	cout << src.at<uchar>(100, 100);
 
   	/// Create a window
   	/*namedWindow( window_name, WINDOW_AUTOSIZE );
@@ -153,6 +155,7 @@ int main( int argc, char* argv[] )
 
 	/// Wait until user exit program by pressing a key
   	//waitKey(0);
+	destroyAllWindows();
 
   	return 0;
 }
