@@ -36,6 +36,21 @@ extern int ANALYSED_PX;
 //displays input image resized with specified factor
 void showResized(const Mat &srcImg, const string& winname, double factor);
 
+/*from http://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
+Here is a handy function you can use to help with identifying your opencv matrices at runtime. I find it useful for debugging, at least.
+If M is a var of type Mat you can call it like so:
+
+string ty =  type2str( M.type() );
+printf("Matrix: %s %dx%d \n", ty.c_str(), M.cols, M.rows );
+
+Will output data such as:
+
+Matrix: 8UC3 640x480 
+Matrix: 64FC1 3x2 
+
+Its worth noting that there are also Matrix methods Mat::depth() and Mat::channels(). This function is just a handy way of getting a human readable interpretation from the combination of those two values whose bits are all stored in the same value.*/
+string type2str(int type);
+
 //szary na czarny:
 //changes grey pixels to black to avoid double parallel lines:
 //takes references and changes dst colours

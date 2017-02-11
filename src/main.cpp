@@ -113,9 +113,9 @@ void CannyThreshold(int, void*)
 int main( int argc, char* argv[] )
 {
 	/// Load an image
- 	src = imread( argv[1] );
+ 	Mat srcRgbImg = imread( argv[1] );
 
-  	if( !src.data )
+  	if( !srcRgbImg.data )
   		return -1;
 
 	int width = 6;
@@ -136,8 +136,26 @@ int main( int argc, char* argv[] )
 	//Gr2Bl(src_gray, src_gray3, 205);
 
 	//testing:
-	showResized(src, "powiekszone", 3.0);
-	cout << src.at<uchar>(100, 100);
+	showResized(srcRgbImg, "powiekszone", 3.0);
+	int value = srcRgbImg.at<uchar>(50, 50);
+	cout << endl << value << endl;
+	value = srcRgbImg.at<uchar>(1, 1);
+	cout << endl << value << endl;
+	
+	string ty =  type2str( srcRgbImg.type() );
+	printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
+	
+	//cvtColor(src, rgbImg, CV_GRAY2RGB);
+	
+	//showResized(rgbImg, "powiekszone", 3.0);
+	//value = rgbImg.at<uchar>(50, 50);
+	//cout << endl << value << endl;
+	//value = rgbImg.at<uchar>(1, 1);
+	//cout << endl << value << endl;
+	/*Vec3b intensity = img.at<Vec3b>(y, x);
+	uchar blue = intensity.val[0];
+	uchar green = intensity.val[1];
+	uchar red = intensity.val[2];*/
 
   	/// Create a window
   	/*namedWindow( window_name, WINDOW_AUTOSIZE );
