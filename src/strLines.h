@@ -33,6 +33,9 @@ extern Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_ds
 extern int kolor;
 extern int ANALYSED_PX;
 
+//displays input image resized with specified factor
+void showResized(const Mat &srcImg, const string& winname, double factor);
+
 //szary na czarny:
 //changes grey pixels to black to avoid double parallel lines:
 //takes references and changes dst colours

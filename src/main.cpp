@@ -33,13 +33,13 @@ int ANALYSED_PX = 0;
 void callFunctions(int width)
 {
 	blur_out = 1 + blur_in * 2; 
-  /// Reduce noise with a kernel 3x3
-  //blur( src_gray, detected_edges, Size(3,3) );
+  	/// Reduce noise with a kernel 3x3
+  	//blur( src_gray, detected_edges, Size(3,3) );
 	//detected_edges_blured = detected_edges.clone();
 	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
 	medianBlur ( src_gray3, src_gray2, blur_out );
-  /// Canny detector
-  Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+  	/// Canny detector
+  	Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
 	Canny( src_gray2, detected_edges2, lowThreshold, lowThreshold*ratio, kernel_size );
 	//imshow( "Canny", detected_edges );
 	//medianBlur ( detected_edges, detected_edges, blu );
@@ -61,13 +61,13 @@ void callFunctions(int width)
 void CannyThreshold(int, void*)
 {
 	blur_out = 1 + blur_in * 2; 
-  /// Reduce noise with a kernel 3x3
-  //blur( src_gray, detected_edges, Size(3,3) );
+  	/// Reduce noise with a kernel 3x3
+  	//blur( src_gray, detected_edges, Size(3,3) );
 	//detected_edges_blured = detected_edges.clone();
 	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
 	medianBlur ( src_gray3, src_gray2, blur_out );
-  /// Canny detector
-  Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+  	/// Canny detector
+  	Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
 	Canny( src_gray2, detected_edges2, lowThreshold, lowThreshold*ratio, kernel_size );
 	//imshow( "Canny", detected_edges );
 	//medianBlur ( detected_edges, detected_edges, blu );
@@ -95,14 +95,9 @@ void CannyThreshold(int, void*)
   }
 */
 	//namedWindow( "Source", 1 );
-  //imshow( "Source", src );
 
-  //namedWindow( "Detected Lines", WINDOW_NORMAL );
-	//resize(color_dst, color_dst, Size(), 1.4, 1.4, INTER_CUBIC);
-  //imshow( "Detected Lines", color_dst );
+  	//namedWindow( "Detected Lines", WINDOW_NORMAL );
 	//namedWindow( "pixels", 1 );
-	//resize(color_dst2, color_dst2, Size(), 1.4, 1.4, INTER_CUBIC);
-  //imshow( "pixels", color_dst2 );
 
   /// Using Canny's output as a mask, we display our result
   dst = Scalar::all(0);
@@ -117,11 +112,11 @@ void CannyThreshold(int, void*)
 /** @function main */
 int main( int argc, char* argv[] )
 {
-  /// Load an image
-  src = imread( argv[1] );
+	/// Load an image
+ 	src = imread( argv[1] );
 
-  if( !src.data )
-  { return -1; }
+  	if( !src.data )
+  		return -1;
 
 	int width = 6;
 	if( argc > 2 )
@@ -130,35 +125,34 @@ int main( int argc, char* argv[] )
 		cout << "width = " << width << endl;
 	}
 
-  /// Create a matrix of the same type and size as src (for dst)
-  dst.create( src.size(), src.type() );
+  	/// Create a matrix of the same type and size as src (for dst)
+  	//dst.create( src.size(), src.type() );
 
-	//GaussianBlur( src, src, Size( 3, 3 ), 0, 0 );
-	//medianBlur ( src_gray, src_gray, 5 );
-  /// Convert the image to grayscale
-  cvtColor( src, src_gray, COLOR_BGR2GRAY );
-	resize(src_gray, src_gray_big, Size(), 1.4, 1.4, INTER_CUBIC);
-	//imshow( "Oryginal", src_gray_big );
-	//szary na czarny:
-	Gr2Bl(src_gray, src_gray3, 205);
-	//sz na cz koniec
+  	/// Convert the image to grayscale
+  	//Needed???
+  	//cvtColor( src, src_gray, COLOR_BGR2GRAY );
+	
+	//Gray pixels to black:
+	//Gr2Bl(src_gray, src_gray3, 205);
 
-  /// Create a window
-  /*namedWindow( window_name, WINDOW_AUTOSIZE );
+	showResized(src, "powiekszone", 1.0);
 
-  /// Create a Trackbar for user to enter threshold
-  createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
+  	/// Create a window
+  	/*namedWindow( window_name, WINDOW_AUTOSIZE );
+
+  	/// Create a Trackbar for user to enter threshold
+  	createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
 	createTrackbar( "Min Lenght:", window_name, &minLenght, 100, CannyThreshold );
 	createTrackbar( "Max Gap:", window_name, &maxGap, 100, CannyThreshold );
 	createTrackbar( "Threshold HLP:", window_name, &thresholdHLP, 200, CannyThreshold );
 	createTrackbar( "Blur:", window_name, &blur_in, 50, CannyThreshold );*/
 
-  /// Show the image
-  //CannyThreshold(0, 0);
-	callFunctions(width);
+  	/// Show the image
+  	//CannyThreshold(0, 0);
+	//callFunctions(width);
 
-  /// Wait until user exit program by pressing a key
-  //waitKey(0);
+	/// Wait until user exit program by pressing a key
+  	//waitKey(0);
 
-  return 0;
-  }
+  	return 0;
+}

@@ -6,6 +6,14 @@
 
 #include "strLines.h"
 
+void showResized(const Mat &srcImg, const string& winname, double factor)
+{
+	Mat bigImg;
+	resize(srcImg, bigImg, Size(), factor, factor, INTER_CUBIC);
+	imshow(winname, bigImg);
+	waitKey(0);
+}
+
 //change grey pixels to black to avoid double parallel lines:
 //takes references and changes dst colours
 //third arg is colour of grey
