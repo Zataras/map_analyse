@@ -62,6 +62,11 @@ void Gr2Bl(Mat &srcImg, Mat &dstImg, int grey);
 //returns found white point coordinates
 Point lookForWhitePxls(Mat &srcImg, Point inPt);
 
+//idea for variable naming convention: [Argument/Local/Static][name][Refernce, Pointer]
+//function returns coordinates of first pixel found in specified color on specified image
+//starting from specified point in horizontal direction
+Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour);
+
 //to check if found point is not neigbour to previous point(and previous point itself)
 //returns true if is not
 bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt );//not used??

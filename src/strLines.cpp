@@ -91,6 +91,34 @@ Point lookForWhitePxls(Mat &srcImg, Point inPt)
 	return pt;
 }
 
+//idea for variable naming convention: [Argument/Local/Static][name][Refernce, Pointer]
+Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
+{
+	bool stop = false;
+	Point pt = aPt;
+
+	while((pt.x < (aImgR.rows - 1) || pt.y < (aImgR.cols - 1)) && stop == false){
+		while(pt.y < (aImgR.cols - 1) && stop == false){
+			Vec3b pxColour = aImgR.at<Vec3b>(pt);
+
+			if( pxColour == aColour)
+			{
+				stop = true;
+			}
+
+			if( !stop )			
+				pt.y++;
+		}
+  		if( !stop && pt.x < (aImgR.rows - 1) )
+  		{		
+			pt.y = 0;
+			pt.x++;
+		}
+	}
+	cout << "Finished looking for pixel: " << pt << endl;
+	return pt;
+}
+
 //to check if found point is not neigbour to previous point(and previous point itself)
 //returns true if is not
 bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
