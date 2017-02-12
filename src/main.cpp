@@ -32,7 +32,7 @@ int ANALYSED_PX = 0;
 
 void callFunctions(Mat &aRgbMapR, int width)
 {
-	//showResized(aRgbMapR, "powiekszoneRef", 3.0);
+	
 		//blur_out = 1 + blur_in * 2; 
   	/// Reduce noise with a kernel 3x3
   	//blur( src_gray, detected_edges, Size(3,3) );
@@ -58,21 +58,25 @@ void callFunctions(Mat &aRgbMapR, int width)
 		aRgbMapR.at<Vec3b>(pt) = Vec3b(0, 255, 0);
 	}*/
 	
-	/*Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+	Mat detected_edges, greyMap;
+	cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
+	Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
 	vector<Vec4i> lines;
 	//threshold[, lines[, minLineLength[, maxLineGap]]]
 	int minLenght = 10;
 	int maxGap = 10;
-	int thresholdHLP = 1;
+	int thresholdHLP = 5;
   	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
   	for( size_t i = 0; i < lines.size(); i++ )
   	{
 		cout << "Linia numer: " << i << endl;
 		cout << "Dane linii: " << Point(lines[i][0], lines[i][1]) << Point(lines[i][2], lines[i][3]) << endl;
 		//cout << "Rówananie prostej: " << i << endl;
-      line( color_dst, Point(lines[i][0], lines[i][1]),
-       Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 2, 8 );
-  	}*/
+      //C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
+      line( aRgbMapR, Point(lines[i][0], lines[i][1]),
+      Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
+  	}
+  	showResized(aRgbMapR, "aRgbMapR", 2.0);
   	
 		//cout << "Analysed pixels: " << ANALYSED_PX << endl;
 }
