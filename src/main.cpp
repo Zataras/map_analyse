@@ -22,7 +22,7 @@ Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, map
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;
 //int minLenght = 35; 
-int maxGap = 20, thresholdHLP = 15;
+
 int const max_lowThreshold = 300;
 int ratio = 3;
 int kernel_size = 3;
@@ -36,7 +36,7 @@ bitset<1> valuesChange;
 
 void CannyThreshold(int, void*);
 
-void callFunctions(Mat &aRgbMapR, int width, int minLenght)
+void callFunctions(Mat &aRgbMapR, int width, int &minLenght, int &maxGap, int &thresholdHLP)
 {
 	
 		//blur_out = 1 + blur_in * 2; 
@@ -59,33 +59,31 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 	}*/
 	
 	Mat detected_edges, greyMap;
-	cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
-	Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
-	vector<Vec4i> lines;
+	Mat clonedRgbMap;
+	
 	//threshold[, lines[, minLineLength[, maxLineGap]]]
-	//int minLenght = 10;
-	int maxGap = 10;
-	int thresholdHLP = 5;
-	bitset<1> valuesChangeSaved;
-	valuesChangeSaved.set();
+	//bitset<1> valuesChangeSaved;
+	//valuesChangeSaved.set();
 	
 	while(true)
 	{
-		if(valuesChangeSaved != valuesChange)
-		{
-			valuesChangeSaved = valuesChange;
-		  	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
-		  	for( size_t i = 0; i < lines.size(); i++ )
-		  	{
-				//cout << "Linia numer: " << i << endl;
-				//cout << "Dane linii: " << Point(lines[i][0], lines[i][1]) << Point(lines[i][2], lines[i][3]) << endl;
-				//cout << "Rówananie prostej: " << i << endl;
-				//C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
-				line( aRgbMapR, Point(lines[i][0], lines[i][1]),
-				Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
-		  	}
-		  	showResized(aRgbMapR, "aRgbMapR", 2.0, 0);
+		clonedRgbMap = aRgbMapR.clone();
+		cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
+		Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+		vector<Vec4i> lines;
+		//valuesChangeSaved = valuesChange;
+	  	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
+	  	for( size_t i = 0; i < lines.size(); i++ )
+	  	{
+			//cout << "Linia numer: " << i << endl;
+			//cout << "Dane linii: " << Point(lines[i][0], lines[i][1]) << Point(lines[i][2], lines[i][3]) << endl;
+			//cout << "Rówananie prostej: " << i << endl;
+			//C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
+			line( clonedRgbMap, Point(lines[i][0], lines[i][1]),
+			Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
 	  	}
+	  	showResized(clonedRgbMap, window_name, 2.0, 100);
+  	//}
 	}
   	
 		//cout << "Analysed pixels: " << ANALYSED_PX << endl;
@@ -96,7 +94,8 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 int main( int argc, char* argv[] )
 {
 
-	int minLenght = 35; 
+	int minLenght = 50; 
+	int maxGap = 20, thresholdHLP = 15;
 	
 	/// Load an image
  	Mat srcRgbImg = imread( argv[1] );
@@ -151,13 +150,13 @@ int main( int argc, char* argv[] )
   	/// Create a Trackbar for user to enter threshold
   	//createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
 	createTrackbar( "Min Lenght:", window_name, &minLenght, 100, CannyThreshold );
-	//reateTrackbar( "Max Gap:", window_name, &maxGap, 100, CannyThreshold );
-	//createTrackbar( "Threshold HLP:", window_name, &thresholdHLP, 200, CannyThreshold );
+	createTrackbar( "Max Gap:", window_name, &maxGap, 100, CannyThreshold );
+	createTrackbar( "Threshold HLP:", window_name, &thresholdHLP, 200, CannyThreshold );
 	//createTrackbar( "Blur:", window_name, &blur_in, 50, CannyThreshold );
 
   	/// Show the image
   	//CannyThreshold(0, 0);
-	callFunctions(auxRgbMap, width, minLenght);
+	callFunctions(auxRgbMap, width, minLenght, maxGap, thresholdHLP);
 
 	/// Wait until user exit program by pressing a key
   	//waitKey(0);
@@ -173,7 +172,7 @@ int main( int argc, char* argv[] )
 void CannyThreshold(int, void*)
 {
 		
-	valuesChange.flip();
+	//valuesChange.flip();
 		//blur_out = 1 + blur_in * 2; 
   	/// Reduce noise with a kernel 3x3
   	//blur( src_gray, detected_edges, Size(3,3) );
