@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>): 
 #include "strLines.h"
+#include <bitset>
 							// std::fill_n(array, 100, -1);
 //#include <unistd.h>//usleep
 
@@ -20,7 +21,8 @@ Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, map
 
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;
-int minLenght = 35, maxGap = 20, thresholdHLP = 15;
+//int minLenght = 35; 
+int maxGap = 20, thresholdHLP = 15;
 int const max_lowThreshold = 300;
 int ratio = 3;
 int kernel_size = 3;
@@ -30,7 +32,11 @@ const char* window_name = str.c_str();
 
 int ANALYSED_PX = 0;
 
-void callFunctions(Mat &aRgbMapR, int width)
+bitset<1> valuesChange;
+
+void CannyThreshold(int, void*);
+
+void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 {
 	
 		//blur_out = 1 + blur_in * 2; 
@@ -39,12 +45,6 @@ void callFunctions(Mat &aRgbMapR, int width)
 	//detected_edges_blured = detected_edges.clone();
 	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
 		//medianBlur ( src_gray3, src_gray2, blur_out );
-  	/// Canny detector
-  		//Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
-		//Canny( src_gray2, detected_edges2, lowThreshold, lowThreshold*ratio, kernel_size );
-	//imshow( "Canny", detected_edges );
-	//medianBlur ( detected_edges, detected_edges, blu );
-	//GaussianBlur( detected_edges, detected_edges, Size( blu, blu ), 0, 0 );
 
 	//test
 	//Point pt = lookForWhitePxls(detected_edges, {0, 0});
@@ -63,20 +63,30 @@ void callFunctions(Mat &aRgbMapR, int width)
 	Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
 	vector<Vec4i> lines;
 	//threshold[, lines[, minLineLength[, maxLineGap]]]
-	int minLenght = 10;
+	//int minLenght = 10;
 	int maxGap = 10;
 	int thresholdHLP = 5;
-  	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
-  	for( size_t i = 0; i < lines.size(); i++ )
-  	{
-		cout << "Linia numer: " << i << endl;
-		cout << "Dane linii: " << Point(lines[i][0], lines[i][1]) << Point(lines[i][2], lines[i][3]) << endl;
-		//cout << "Rówananie prostej: " << i << endl;
-      //C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
-      line( aRgbMapR, Point(lines[i][0], lines[i][1]),
-      Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
-  	}
-  	showResized(aRgbMapR, "aRgbMapR", 2.0);
+	bitset<1> valuesChangeSaved;
+	valuesChangeSaved.set();
+	
+	while(true)
+	{
+		if(valuesChangeSaved != valuesChange)
+		{
+			valuesChangeSaved = valuesChange;
+		  	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
+		  	for( size_t i = 0; i < lines.size(); i++ )
+		  	{
+				//cout << "Linia numer: " << i << endl;
+				//cout << "Dane linii: " << Point(lines[i][0], lines[i][1]) << Point(lines[i][2], lines[i][3]) << endl;
+				//cout << "Rówananie prostej: " << i << endl;
+				//C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
+				line( aRgbMapR, Point(lines[i][0], lines[i][1]),
+				Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
+		  	}
+		  	showResized(aRgbMapR, "aRgbMapR", 2.0, 0);
+	  	}
+	}
   	
 		//cout << "Analysed pixels: " << ANALYSED_PX << endl;
 }
@@ -85,6 +95,9 @@ void callFunctions(Mat &aRgbMapR, int width)
 /** @function main */
 int main( int argc, char* argv[] )
 {
+
+	int minLenght = 35; 
+	
 	/// Load an image
  	Mat srcRgbImg = imread( argv[1] );
 
@@ -133,18 +146,18 @@ int main( int argc, char* argv[] )
 	cout  << intensity << endl;
 	
   	/// Create a window
-  	/*namedWindow( window_name, WINDOW_AUTOSIZE );
+  	namedWindow( window_name, WINDOW_AUTOSIZE );
 
   	/// Create a Trackbar for user to enter threshold
-  	createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
+  	//createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, CannyThreshold );
 	createTrackbar( "Min Lenght:", window_name, &minLenght, 100, CannyThreshold );
-	createTrackbar( "Max Gap:", window_name, &maxGap, 100, CannyThreshold );
-	createTrackbar( "Threshold HLP:", window_name, &thresholdHLP, 200, CannyThreshold );
-	createTrackbar( "Blur:", window_name, &blur_in, 50, CannyThreshold );*/
+	//reateTrackbar( "Max Gap:", window_name, &maxGap, 100, CannyThreshold );
+	//createTrackbar( "Threshold HLP:", window_name, &thresholdHLP, 200, CannyThreshold );
+	//createTrackbar( "Blur:", window_name, &blur_in, 50, CannyThreshold );
 
   	/// Show the image
   	//CannyThreshold(0, 0);
-	callFunctions(auxRgbMap, width);
+	callFunctions(auxRgbMap, width, minLenght);
 
 	/// Wait until user exit program by pressing a key
   	//waitKey(0);
@@ -159,27 +172,23 @@ int main( int argc, char* argv[] )
  */
 void CannyThreshold(int, void*)
 {
-	blur_out = 1 + blur_in * 2; 
+		
+	valuesChange.flip();
+		//blur_out = 1 + blur_in * 2; 
   	/// Reduce noise with a kernel 3x3
   	//blur( src_gray, detected_edges, Size(3,3) );
 	//detected_edges_blured = detected_edges.clone();
 	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
-	medianBlur ( src_gray3, src_gray2, blur_out );
-  	/// Canny detector
-  	Canny( src_gray2, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
-	Canny( src_gray2, detected_edges2, lowThreshold, lowThreshold*ratio, kernel_size );
-	//imshow( "Canny", detected_edges );
-	//medianBlur ( detected_edges, detected_edges, blu );
-	//GaussianBlur( detected_edges, detected_edges, Size( blu, blu ), 0, 0 );
+		//medianBlur ( src_gray3, src_gray2, blur_out );
 
 	//test
 	//Point pt = lookForWhitePxls(detected_edges, {0, 0});
 	//cout << "ZNALEZNIONO PUNKT: " << pt << endl;
 	//countStdDev(detected_edges2, src_gray, 6);
 	
-	cvtColor( detected_edges, color_dst, CV_GRAY2BGR );
+		//cvtColor( detected_edges, color_dst, CV_GRAY2BGR );
 
-	cvtColor( detected_edges2, color_dst2, CV_GRAY2BGR );	
+		//cvtColor( detected_edges2, color_dst2, CV_GRAY2BGR );	
 	/*
 	vector<Vec4i> lines;
 	//threshold[, lines[, minLineLength[, maxLineGap]]]
@@ -199,10 +208,10 @@ void CannyThreshold(int, void*)
 	//namedWindow( "pixels", 1 );
 
   /// Using Canny's output as a mask, we display our result
-  dst = Scalar::all(0);
+  		//dst = Scalar::all(0);
 	
-  src.copyTo( dst, detected_edges);
+  		//src.copyTo( dst, detected_edges);
 	
-	resize(dst, dst, Size(), 1.5, 1.5, INTER_CUBIC);
-  imshow( window_name, src_gray2 );
+		//resize(dst, dst, Size(), 1.5, 1.5, INTER_CUBIC);
+  		//imshow( window_name, src_gray2 );
  }

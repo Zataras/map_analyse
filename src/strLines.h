@@ -34,7 +34,8 @@ extern int kolor;
 extern int ANALYSED_PX;
 
 //displays input image resized with specified factor
-void showResized(const Mat &srcImg, const string& winname, double factor);
+//time specifies argument for WaitKey(timeMs)
+void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs);
 
 /*from http://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
 Here is a handy function you can use to help with identifying your opencv matrices at runtime. I find it useful for debugging, at least.

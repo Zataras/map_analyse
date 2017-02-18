@@ -6,14 +6,14 @@
 
 #include "strLines.h"
 
-void showResized(const Mat &srcImg, const string& winname, double factor)
+void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs)
 {
 	Mat bigImg;
 	//INTER_NEAREST do not fuzz pixels
 	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
 	namedWindow(winname, WINDOW_AUTOSIZE);
 	imshow(winname, bigImg);
-	waitKey(0);
+	waitKey(timeMs);
 }
 
 string type2str(int type) {
