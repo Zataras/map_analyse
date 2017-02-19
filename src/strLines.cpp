@@ -42,16 +42,13 @@ string type2str(int type) {
 //change grey pixels to black to avoid double parallel lines:
 //takes references and changes dst colours
 //third arg is colour of grey
-void Gr2Bl(Mat &srcImg, Mat &dstImg, int grey)
+void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 {
-	dstImg = srcImg.clone();
-	for(int x = 0; x <= dstImg.rows; x++){
-		for(int y = 0; y <= dstImg.cols; y++){
-			//Scalar intensity = img.at<uchar>(y, x);
-			int val = dstImg.at<uchar>(x, y);
-			//cout << val << endl;
-			if( val == grey)
-				dstImg.at<uchar>(x, y) = 0;
+	for(int x = 0; x <= Img.rows; x++){
+		for(int y = 0; y <= Img.cols; y++){
+			//Vec3b pxColor = Img.at<Vec3b>(x, y);
+			if( Img.at<Vec3b>(x, y) == srcColor)
+				Img.at<Vec3b>(x, y) = dstColor;
 		}
 	}
 }

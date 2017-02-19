@@ -52,11 +52,9 @@ Matrix: 64FC1 3x2
 Its worth noting that there are also Matrix methods Mat::depth() and Mat::channels(). This function is just a handy way of getting a human readable interpretation from the combination of those two values whose bits are all stored in the same value.*/
 string type2str(int type);
 
-//szary na czarny:
-//changes grey pixels to black to avoid double parallel lines:
-//takes references and changes dst colours
-//third arg is colour of grey
-void Gr2Bl(Mat &srcImg, Mat &dstImg, int grey);
+//changes one color pixels to another to avoid double parallel lines:
+//takes references and changes to dst colour
+void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
 //podaj początkowy punkt, poszukiwanie inkrementuje x i y
 //pass start point, searches and increments x and y coordinates

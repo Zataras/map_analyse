@@ -94,18 +94,17 @@ int main( int argc, char* argv[] )
 		cout << "width = " << width << endl;
 	}
 
-  	/// Create a matrix of the same type and size as src (for dst)
-  	//dst.create( src.size(), src.type() );
-
   	/// Convert the image to grayscale
   	//Needed???
   	//cvtColor( src, src_gray, COLOR_BGR2GRAY );
-	
-	//Gray pixels to black:
-	//Gr2Bl(src_gray, src_gray3, 205);
 
 	//testing:
 	Mat auxRgbMap = srcRgbImg.clone();
+	
+	
+	
+	//Gray pixels to black:
+	colorChangeAllRgb(auxRgbMap, Vec3b(205, 205, 205), Vec3b(255, 255, 255));
 	
 	srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
