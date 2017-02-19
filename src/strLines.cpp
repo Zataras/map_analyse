@@ -58,9 +58,10 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 	Point pt(0,0);
 	//const Vec3b BLACK(0, 0, 0);
 	
-	while(pt.x  < (caSrcRgbImgR.rows - 1) || pt.y < (caSrcRgbImgR.cols - 1))
+	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
 		{
 			pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
+			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 1);
 			//cout << pt << endl;
 		}
 }
@@ -71,8 +72,8 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	bool stop = false;
 	Point pt = aPt;
 
-	while((pt.x < (aImgR.rows - 1) || pt.y < (aImgR.cols - 1)) && stop == false){
-		while(pt.x < (aImgR.rows - 1) && stop == false){
+	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
+		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
 
 			if( pxColour == aColour)
@@ -84,7 +85,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( !stop )			
 				pt.x++;
 		}
-  		if( !stop && pt.y < (aImgR.cols - 1) )
+  		if( !stop && pt.y < (aImgR.rows) )
   		{		
 			pt.x = 0;
 			pt.y++;

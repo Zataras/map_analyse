@@ -113,7 +113,7 @@ int main( int argc, char* argv[] )
 	
 	createMapOfMeanLines(srcRgbImg, auxRgbMap);
 	
-	showResized(auxRgbMap, "auxRgbMap", 2.5, 0);
+	
 	
 	//showResized(srcRgbImg, "powiekszone", 3.0);
 	//int value = srcRgbImg.at<uchar>(50, 50);
