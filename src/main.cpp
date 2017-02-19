@@ -7,14 +7,20 @@
 #include <iomanip>
 #include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>): 
 #include "strLines.h"
-#include <bitset>
-							// std::fill_n(array, 100, -1);
+//#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
 
 using namespace cv;
 using namespace std;
 
 /// Global variables
+
+
+const colors COLORS = 
+{
+	Vec3b(0,0,0),
+	Vec3b(0,255,0)
+};
 
 Mat src, src_gray, gb, src_gray2, src_gray3, src_gray_big;
 Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, mapaRobocza;
@@ -32,8 +38,6 @@ const char* window_name = str.c_str();
 
 int ANALYSED_PX = 0;
 
-//bitset<1> valuesChange;
-
 void CannyThreshold(int, void*);
 
 void callFunctions(Mat &aRgbMapR, int width, int minLenght)
@@ -46,11 +50,11 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
 		//medianBlur ( src_gray3, src_gray2, blur_out );
 
-	//test
 	//Point pt = lookForWhitePxls(detected_edges, {0, 0});
-	//cout << "ZNALEZNIONO PUNKT: " << pt << endl;
-		//countStdDev(aRgbMapR, aRgbMapR, width);
-	Point pt(0,0);	
+	//cout << "ZNALEZNIONO PUNKT: " << pt << endl
+	
+	//countStdDev(aRgbMapR, aRgbMapR, width);
+	//Point pt(0,0);	
 	/*while(pt.x  < (aRgbMapR.rows - 1) || pt.y < (aRgbMapR.cols - 1))
 	{
 		cout << "new cycle"<< endl;	
@@ -58,18 +62,11 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 		aRgbMapR.at<Vec3b>(pt) = Vec3b(0, 255, 0);
 	}*/
 	
-	Mat detected_edges, greyMap;
-	cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
-	Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
-	vector<Vec4i> lines;
-	//threshold[, lines[, minLineLength[, maxLineGap]]]
-	//int minLenght = 10;
-	int maxGap = 10;
-	int thresholdHLP = 5;
-	bitset<1> valuesChangeSaved;
-	//valuesChangeSaved.set();	
+		//Mat detected_edges, greyMap;
+		//cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
 
-  	showResized(aRgbMapR, "aRgbMapR", 2.0, 0);
+
+  	//showResized(aRgbMapR, "aRgbMapR", 2.0, 0);
 
 		//cout << "Analysed pixels: " << ANALYSED_PX << endl;
 }
@@ -94,6 +91,12 @@ int main( int argc, char* argv[] )
 		cout << "width = " << width << endl;
 	}
 
+	string ty =  type2str( srcRgbImg.type() );
+	printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
+	
+	cout << srcRgbImg.rows << " x " << srcRgbImg.cols << endl;
+	//srcRgbImg.at<Vec3b>(Point(373, 403)) = COLORS.green;
+	cout << " end ";
   	/// Convert the image to grayscale
   	//Needed???
   	//cvtColor( src, src_gray, COLOR_BGR2GRAY );
@@ -106,7 +109,11 @@ int main( int argc, char* argv[] )
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, Vec3b(205, 205, 205), Vec3b(255, 255, 255));
 	
-	srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
+	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
+	
+	createMapOfMeanLines(srcRgbImg, auxRgbMap);
+	
+	showResized(auxRgbMap, "auxRgbMap", 2.5, 0);
 	
 	//showResized(srcRgbImg, "powiekszone", 3.0);
 	//int value = srcRgbImg.at<uchar>(50, 50);
@@ -114,18 +121,9 @@ int main( int argc, char* argv[] )
 	//value = srcRgbImg.at<uchar>(1, 1);
 	//cout << endl << value << endl;
 	
-	string ty =  type2str( srcRgbImg.type() );
-	printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
+
 	
 	//cvtColor(src, rgbImg, CV_GRAY2RGB);
-	
-	Vec3b intensity = srcRgbImg.at<Vec3b>(50, 50);
-	/*uchar blue = intensity.val[0];
-	uchar green = intensity.val[1];
-	uchar red = intensity.val[2];*/
-	cout  << intensity << endl;
-	intensity = srcRgbImg.at<Vec3b>(1, 1);
-	cout  << intensity << endl;
 	
   	/// Create a window
   	//namedWindow( window_name, WINDOW_AUTOSIZE );

@@ -53,66 +53,44 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 	}
 }
 
-//podaj początkowy punkt, poszukiwanie inkrementuje x i y
-//pass start point, searches and increments x and y coordinates
-//returns found white point coordinates
-Point lookForWhitePxls(Mat &srcImg, Point inPt)
+void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 {
-	Mat src = srcImg;
-	bool stop = false;
-	Point pt;
-	pt = inPt;
-
-	//cout << "srcImg.rows = " << srcImg.rows << endl;
-	//cout << "srcImg.cols = " << srcImg.cols << endl;
-
-	while((pt.x < (srcImg.rows - 1) || pt.y < (srcImg.cols - 1)) && stop == false){
-		while(pt.y < (srcImg.cols - 1) && stop == false){
-			int val = srcImg.at<uchar>(pt.x, pt.y);
-
-			if( val == 255){//jesli bialy
-				stop = true;
-			}
-			//srcImg.at<uchar>(pt.x, pt.y-1) = 100;
-			//srcImg.at<uchar>(pt.x, pt.y) = 150;
-
-			if( !stop )			
-				pt.y++;
+	Point pt(0,0);
+	//const Vec3b BLACK(0, 0, 0);
+	
+	while(pt.x  < (caSrcRgbImgR.rows - 1) || pt.y < (caSrcRgbImgR.cols - 1))
+		{
+			pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
+			//cout << pt << endl;
 		}
-  	if( !stop && pt.x < (srcImg.rows - 1) ){		
-			pt.y = 0;
-			pt.x++;
-		}
-	}
-	//cout << "Finished looking for white pixel" << endl;
-	return pt;
 }
 
-//idea for variable naming convention: [Argument/Local/Static][name][Refernce, Pointer]
+//idea for variable naming convention: [Argument/Local/Static][name][Reference, Pointer]
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 {
 	bool stop = false;
 	Point pt = aPt;
 
 	while((pt.x < (aImgR.rows - 1) || pt.y < (aImgR.cols - 1)) && stop == false){
-		while(pt.y < (aImgR.cols - 1) && stop == false){
+		while(pt.x < (aImgR.rows - 1) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
 
 			if( pxColour == aColour)
 			{
 				stop = true;
+				aImgR.at<Vec3b>(pt) = COLORS.green;
 			}
 
 			if( !stop )			
-				pt.y++;
+				pt.x++;
 		}
-  		if( !stop && pt.x < (aImgR.rows - 1) )
+  		if( !stop && pt.y < (aImgR.cols - 1) )
   		{		
-			pt.y = 0;
-			pt.x++;
+			pt.x = 0;
+			pt.y++;
 		}
 	}
-	cout << "Finished looking for pixel: " << pt << endl;
+	//cout << "Finished looking for pixel: " << pt << endl;
 	return pt;
 }
 
@@ -429,7 +407,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 //dokladnosc to odchylenie danego pomiaru od spodziewanej wartosci referencyjnej
 //czyli moze dla kazdego pixela osobno nalezy wyznaczyc dokladnosc?
 
-//zwraca dokladnosc w procentach
+//returns standard deviation of measurements with laser scanner
 //okresla ile pixeli w najblizszym otoczeniu linii nie nalezy do linii
 //okreslic jako linie tylko dlugie proste i tylko je analizowac
 //wyszlo probnie ze odchylenie st. = 0.0878308 
@@ -450,11 +428,11 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 	cvtColor( detected_edges2, color_dst3, CV_GRAY2BGR );
 	int lines[4];
 	
-	//until 
+	//until reaches map's last pixel
 	while(pt.x  < (edgeImg.rows - 1) || pt.y < (edgeImg.cols - 1))
 	{
 		//cout << "new cycle"<< endl;	
-		pt = lookForWhitePxls(edgeImg, pt);
+			//pt = lookForWhitePxls(edgeImg, pt);
 		//cout << pt << endl;
 		
 		Point nextPoint = pt, actPoint = pt, prevPoint = pt;

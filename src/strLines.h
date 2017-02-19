@@ -27,7 +27,15 @@
 using namespace cv;
 using namespace std;
 
+struct colors
+{
+	Vec3b black;
+	Vec3b green;
+};
+
 /// Global variables
+extern const colors COLORS;
+
 extern Mat src, src_gray, gb, src_gray2, src_gray3, src_gray_big;
 extern Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, mapaRobocza;
 extern int kolor;
@@ -56,12 +64,10 @@ string type2str(int type);
 //takes references and changes to dst colour
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
-//podaj początkowy punkt, poszukiwanie inkrementuje x i y
-//pass start point, searches and increments x and y coordinates
-//returns found white point coordinates
-Point lookForWhitePxls(Mat &srcImg, Point inPt);
+//Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
+void createMapOfMeanLines(const Mat &srcRgbImgR, Mat &auxRgbMap);
 
-//idea for variable naming convention: [Argument/Local/Static][name][Refernce, Pointer]
+//idea for variable naming convention: [Const][Argument/Local/Static][name][Reference, Pointer]
 //function returns coordinates of first pixel found in specified color on specified image
 //starting from specified point in horizontal direction
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour);
