@@ -56,14 +56,20 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	Point pt(0,0);
+	bool lookInRevDir = false;
 	//const Vec3b BLACK(0, 0, 0);
 	
+	//while there is still any not analysed pixel
 	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
 		{
 			pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
-			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 1);
-			//cout << pt << endl;
+			//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
+			//cout << pt << endl; //debug
+			Point nextPt = pt, actPt = pt, prevPt = pt;
+			
+			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
 		}
+		
 }
 
 //idea for variable naming convention: [Argument/Local/Static][name][Reference, Pointer]
@@ -79,7 +85,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( pxColour == aColour)
 			{
 				stop = true;
-				aImgR.at<Vec3b>(pt) = COLORS.green;
+				//aImgR.at<Vec3b>(pt) = COLORS.green; //for debug
 			}
 
 			if( !stop )			
@@ -91,7 +97,6 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			pt.y++;
 		}
 	}
-	//cout << "Finished looking for pixel: " << pt << endl;
 	return pt;
 }
 
@@ -159,7 +164,7 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 }
 
 //szuka kolejnego pixela nalezącego do konturu
-Point findNextPixelEdge(Mat &srcImg, Mat &pixImg, Point prevPt, Point actPt, bool lookInRevDir){
+Point findNextPixelEdge(Mat &srcImg, Point prevPt, Point actPt, bool lookInRevDir){
 	Point nextPoint(-1,-1);
 	int white = 255;
 
@@ -430,11 +435,10 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 	int lines[4];
 	
 	//until reaches map's last pixel
-	while(pt.x  < (edgeImg.rows - 1) || pt.y < (edgeImg.cols - 1))
+	while(pt.x  < (edgeImg.rows) || pt.y < (edgeImg.cols))
 	{
 		//cout << "new cycle"<< endl;	
 			//pt = lookForWhitePxls(edgeImg, pt);
-		//cout << pt << endl;
 		
 		Point nextPoint = pt, actPoint = pt, prevPoint = pt;
 		int tempInt = edgeImg.at<uchar>(pt.x, pt.y);
@@ -478,7 +482,7 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 			//if( lookInRevDir )
 			//	dirChangeLimit = 5; 
 			//pt = nextPoint;
-			nextPoint = findNextPixelEdge(edgeImg, pixImg, prevPoint, actPoint, lookInRevDir);
+			nextPoint = findNextPixelEdge(edgeImg, prevPoint, actPoint, lookInRevDir);
 
 			//if previous, actual and next points difference points that they
 			// may be lying on straight line then take this point into consideration in 

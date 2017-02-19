@@ -94,12 +94,8 @@ int main( int argc, char* argv[] )
 	string ty =  type2str( srcRgbImg.type() );
 	printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
 	
-	cout << srcRgbImg.rows << " x " << srcRgbImg.cols << endl;
+	//cout << srcRgbImg.rows << " x " << srcRgbImg.cols << endl;
 	//srcRgbImg.at<Vec3b>(Point(373, 403)) = COLORS.green;
-	cout << " end ";
-  	/// Convert the image to grayscale
-  	//Needed???
-  	//cvtColor( src, src_gray, COLOR_BGR2GRAY );
 
 	//testing:
 	Mat auxRgbMap = srcRgbImg.clone();

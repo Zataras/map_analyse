@@ -82,7 +82,7 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 
 //szuka kolejnego pixela nalezącego do konturu
 //looking for next pixel on edge, returns its coordinates
-Point findNextPixelEdge(Mat &srcImg, Mat &pixImg, Point prevPt, Point actPt, bool lookInRevDir);
+Point findNextPixelEdge(Mat &srcImg, Point prevPt, Point actPt, bool lookInRevDir);
 
 
 Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth);
