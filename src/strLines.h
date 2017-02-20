@@ -36,9 +36,7 @@ struct colors
 /// Global variables
 extern const colors COLORS;
 
-extern Mat src, src_gray, gb, src_gray2, src_gray3, src_gray_big;
-extern Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, mapaRobocza;
-extern int kolor;
+extern Mat  detected_edges, detected_edges2, mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
 
 //displays input image resized with specified factor

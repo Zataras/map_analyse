@@ -348,10 +348,6 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 	counterFound = counterFoundEdge + counterFoundOut;
 	int percentValue = 0;
 
-	kolor = kolor + 5;
-	if (kolor >= 245)
-		kolor = 50;
-
 	int pxCounter = counterFoundOut;
 	//Pierwiastek estymatora nieobciążonego wariancji:
 	//s to wartosc odchylenia, sumSqrXi to suma kwaratów odchyleń pixeli
@@ -476,25 +472,31 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 		int diffSumLimit = 5;
 		diffSum = 0;
 
+		//while there is still any not analysed pixel
 		while( nextPoint.x != -1 )
 		{
 			
 			//if( lookInRevDir )
 			//	dirChangeLimit = 5; 
 			//pt = nextPoint;
+			
+			//find next "obstacle" pixel in current series
 			nextPoint = findNextPixelEdge(edgeImg, prevPoint, actPoint, lookInRevDir);
 
 			//if previous, actual and next points difference points that they
 			// may be lying on straight line then take this point into consideration in 
 			// counting accuracy
-			cout << "Pts are: " << prevPoint << actPoint << nextPoint << endl;
+			//cout << "Pts are: " << prevPoint << actPoint << nextPoint << endl;
+			
+			//check current direction of last 3 pixels
 			if( !lookInRevDir )
 				direction = checkDirection( prevPoint, actPoint, nextPoint );
-			cout << "Direction is: " << direction << endl;
+			
+			//cout << "Direction is: " << direction << endl;
 			//cout << ". Act point is: " << actPoint << endl;
 			// dodac kontrole calkowitej zmiany wspolrzednej
 			
-			//count whole coordinate change is direction opposite to currently analysed
+			//count whole coordinate change if direction is opposite to currently analysed
 			//to check if limit is not exceeded
 			if( !lookInRevDir )
 			{
@@ -505,17 +507,21 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 					diffSum += diffPt.x;
 			}
 
-			//save first considered currently direction
+			//save first considered currently direction as refernece
 			if( currDir == -1 && direction != 0 )
 				currDir = direction;
 
 			//if current direction is not equal to currenly analysed, increase counter value
+			//if is reset value
 			if( direction != currDir )
 				dirChangeCount++;
 			else
 				dirChangeCount = 0;
 			
-			//if sum of direction changes limit is exceed or 
+			//if sum of direction changes or whole coordinate change limit is exceed 
+			//then check if line has reched minimum length
+			//is yes it will be further analysed
+			//if not set -1 and this series will be ommited
 			if ( dirChangeCount > dirChangeLimit || diffSum > diffSumLimit )
 			{
 				//currDir = -1;
@@ -541,6 +547,7 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 				ileDlugich++;
 			}
 
+			//set true if reached
 			if( lineLength > lineLenghtMin )
 				minLineLenReached = true;
 			
@@ -580,9 +587,7 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 
 		if (lineLength > longest)
 			longest = lineLength;
-		//kolor = kolor + 50;
-		//if (kolor > 255)
-			kolor = 25;
+
 	}
 	//resize(src_gray, src_gray_big, Size(), 1.4, 1.4, INTER_CUBIC);
 	imshow( "linie", color_dst3 );
