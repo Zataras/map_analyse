@@ -29,8 +29,12 @@ using namespace std;
 
 struct colors
 {
-	Vec3b black;
+	Vec3b blue;
 	Vec3b green;
+	Vec3b red;
+	Vec3b black;
+	Vec3b white;
+	Vec3b grey;
 };
 
 /// Global variables

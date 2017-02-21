@@ -12,14 +12,18 @@
 
 using namespace cv;
 using namespace std;
-
+ 
 /// Global variables
 
-
+//BGR
 const colors COLORS = 
 {
+	Vec3b(255,0,0),
+	Vec3b(0,255,0),
+	Vec3b(0,0,255),
 	Vec3b(0,0,0),
-	Vec3b(0,255,0)
+	Vec3b(255,255,255),
+	Vec3b(127,127,127)
 };
 
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;

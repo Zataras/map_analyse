@@ -57,18 +57,45 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	Point pt(0,0);
 	bool lookInRevDir = false;
-	//const Vec3b BLACK(0, 0, 0);
+	int lineLength;
 	
-	//while there is still any not analysed pixel
+	
+	//until reaches map's last pixel
 	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
+	{	
+		lineLength = 0;
+		
+		cout << "New cycle" <<endl;
+		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
+		//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
+		//cout << pt << endl; //debug
+		Point nextPt = pt, actPt = pt, prevPt = pt;
+		
+		//while there is still any not analysed pixel
+		while( nextPt.x != -1 )
 		{
-			pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
-			//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
-			//cout << pt << endl; //debug
-			Point nextPt = pt, actPt = pt, prevPt = pt;
-			
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
+			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
+			
+			//update points values
+			if( !lookInRevDir || lineLength != 0 )
+			{
+				prevPt = actPt;
+				actPt = nextPt;
+			}
+			else 
+			{
+				if( lineLength == 0 )
+				{
+					Point tempPt = nextPt;			
+					nextPt = prevPt; 
+					prevPt = tempPt;
+				}			
+			}
+			
+			lineLength++;
 		}
+	}
 		
 }
 
@@ -85,7 +112,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( pxColour == aColour)
 			{
 				stop = true;
-				//aImgR.at<Vec3b>(pt) = COLORS.green; //for debug
+				aImgR.at<Vec3b>(pt) = COLORS.green; //for debug
 			}
 
 			if( !stop )			
@@ -100,28 +127,29 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	return pt;
 }
 
-//to check if found point is not neigbour to previous point(and previous point itself)
-//returns true if is not
-bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
-{
-	bool retVal = false;
-	Point diffPoint = refPt - checkPt;
-	if( refPt != checkPt )	
-		if( abs(diffPoint.x) != 1 )
-			if( abs(diffPoint.y) != 1 )
-				retVal = true;
-	return retVal;
+//szuka kolejnego pixela nalezącego do konturu
+Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir){
+	Point nextPt(-1,-1);
+
+	//cout << "In findNextPixelEdge" << endl;
+	nextPt = checkSpecDirection( aImgR, actPt, prevPt, 3, lookInRevDir );
+	cout << "Next point is " << nextPt << endl;
+
+	if( !lookInRevDir )
+		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
+	
+	return nextPt;
 }
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
 Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bool lookInRevDir )// pt = point
 {
-	int white;	
+	Vec3b wantedColor;	
 	Point foundPt( -1, -1 ), modPt; 
 	if( lookInRevDir )
-		white = 80;
+		wantedColor = COLORS.grey;
 	else
-		white = 255;
+		wantedColor = COLORS.black;
 	bool found = false;
 	int direction;
 
@@ -149,7 +177,7 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 						modPt = actPt + Point( +(mG - 1), -rad );
 					break;
 				}
-				if( srcImg.at<uchar>( modPt.x, modPt.y ) == white && modPt != prevPt )
+				if( srcImg.at<Vec3b>(modPt) == wantedColor && modPt != prevPt )
 				{	
 					foundPt = modPt;
 					found = true;
@@ -163,31 +191,18 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 	return foundPt;
 }
 
-//szuka kolejnego pixela nalezącego do konturu
-Point findNextPixelEdge(Mat &srcImg, Point prevPt, Point actPt, bool lookInRevDir){
-	Point nextPoint(-1,-1);
-	int white = 255;
-
-	cout << "In findNextPixelEdge" << endl;
-	nextPoint = checkSpecDirection( srcImg, actPt, prevPt, 3, lookInRevDir );
-	//cout << nextPoint << endl;
-	//cout << "found" << endl;
-	if( !lookInRevDir )
-		srcImg.at<uchar>(prevPt.x, prevPt.y) = 80;
-	//else
-	//	srcImg.at<uchar>(prevPt.x, prevPt.y) = 220; //shows currently analysed pixels
-	namedWindow( "Curent State", WINDOW_AUTOSIZE ); //uncomment to see image
-	imshow( "Curent State", srcImg ); //uncomment to see image
-	//cout << "before 200ms";
-	//usleep(2000);//us
-	
-  waitKey(1);	//uncomment to see image
-
-	//cout << "after 200ms";
-	
-	return nextPoint;
+//to check if found point is not neigbour to previous point(and previous point itself)
+//returns true if is not
+bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
+{
+	bool retVal = false;
+	Point diffPoint = refPt - checkPt;
+	if( refPt != checkPt )	
+		if( abs(diffPoint.x) != 1 )
+			if( abs(diffPoint.y) != 1 )
+				retVal = true;
+	return retVal;
 }
-
 
 Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
@@ -540,7 +555,10 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 					nextPoint.x = -1;
 				}
 			}
-
+			
+			//If going backwards measured forward length is reched then finish analying this series.
+			//Maybe it's bad idea? maybe should follow until doesn't fit previous condiditons
+			//like sum of direction changes or whole coordinate change limit is exceed 
 			if( lookInRevDir && (lineLength >= (reachedLen - 2)) )
 			{
 				nextPoint.x = -1;
@@ -569,9 +587,7 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 			
 			if( lookInRevDir ) //if accepted to analyse
 			{
-				//countTrueMean(pixImg, prevPoint, actPoint, otoczenie);
 				dokladnosc = countTrueMean(pixImg, prevPoint, actPoint, otoczenie, currDir);
-				//CountStandDevInt(pixImg, prevPoint, actPoint, otoczenie);
 				if( dokladnosc >= 0 ){
 					sum2 = sum2 + dokladnosc;
 					sum = sum + dokladnosc;
@@ -589,12 +605,10 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 			longest = lineLength;
 
 	}
-	//resize(src_gray, src_gray_big, Size(), 1.4, 1.4, INTER_CUBIC);
 	imshow( "linie", color_dst3 );
 	cout << "Najdluzszych linii jest = " << ileDlugich << endl;
 	dokladnosc = sum / ile;
 	cout << "linesCounter = " << linesCounter << endl;
 	cout << "Odchylenie standardowe = " << dokladnosc << " px" << endl;
-	//imshow( "pixImg", pixImg );
 	return 0;
 }
