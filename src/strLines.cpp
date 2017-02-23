@@ -55,16 +55,20 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 
 void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 {
-	Point pt(0,0);
-	bool lookInRevDir = false;
-	int lineLength;
-	
+	Point pt(0,0), diffPt;
+	bool minLineLenReached, lookInRevDir;
+	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
+	int diffSumLimit = 5, lineLenghtMin = 50, dirChangeLimit = 3;
 	
 	//until reaches map's last pixel
 	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
 	{	
-		lineLength = 0;
-		
+		linesCounter++;
+		lineLength = 0; reachedLen = 0;
+		dirChangeCount = 0; lineLength = 0; diffSum = 0;
+		lookInRevDir = false; minLineLenReached = false;
+		currDir = -1;
+
 		cout << "New cycle" <<endl;
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
@@ -94,6 +98,75 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 			}
 			
 			lineLength++;
+			//------------------------------------------
+			//check current direction of last 3 pixels
+			direction = checkDirection( prevPt, actPt, nextPt );
+			
+			//count whole coordinate change if direction is opposite to currently analysed
+			//to check if limit is not exceeded
+			diffPt = actPt - prevPt;
+			if( currDir == 1)
+				diffSum += diffPt.y;
+			if( currDir == 2)
+				diffSum += diffPt.x;
+
+			//save first considered currently direction as refernece
+			if( currDir == -1 && direction != 0 )
+				currDir = direction;
+
+			//if current direction is not equal to currenly analysed, increase counter value
+			//if is reset value
+			if( direction != currDir )
+				dirChangeCount++;
+			else
+				dirChangeCount = 0;
+			
+			//if sum of direction changes or whole coordinate change limit is exceed 
+			//then check if line has reched minimum length
+			//is yes it will be further analysed
+			if ( dirChangeCount > dirChangeLimit || diffSum > diffSumLimit )
+			{
+				//currDir = -1;
+				diffSum = 0;
+				if( minLineLenReached )
+				{
+					lookInRevDir = true;
+					dirChangeCount = -1;
+					reachedLen = lineLength;
+					//cout << "Direction changed and min len reached = " << lineLength << endl;
+					lineLength = 0;
+				}
+				else
+				{
+					//if not set -1 and this series will be ommited
+					nextPt.x = -1;
+				}
+			}
+			
+			//If going backwards measured forward length is reached then finish analying this series.
+			//Maybe it's bad idea? maybe should follow until doesn't fit previous condiditons
+			//like sum of direction changes or whole coordinate change limit is exceed 
+			/*if( lookInRevDir && (lineLength >= (reachedLen - 2)) )
+			{
+				nextPt.x = -1;
+				ileDlugich++;
+			}*/
+
+			//set true if reached
+			if( lineLength > lineLenghtMin )
+				minLineLenReached = true;
+				
+			if( lookInRevDir ) //if accepted to analyse
+			{
+				//dokladnosc = countTrueMean(pixImg, prevPoint, actPoint, otoczenie, currDir);
+				//if( dokladnosc >= 0 ){
+					//sum2 = sum2 + dokladnosc;
+					//sum = sum + dokladnosc;
+					//ile++;
+					//ile2++;
+				//}
+				//cout << "licze dokladnosc" << endl;
+			}
 		}
 	}
 		
@@ -206,19 +279,19 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 
 Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
-	uchar black = 0;
+	//uchar black = 0;
 	cout << "In countTrueMeanInt" << endl;
 	cout << "Checking " << PrevPtMod << endl;
-	int color = pixImg.at<uchar>(PrevPtMod);
+	Vec3b color = pixImg.at<Vec3b>(PrevPtMod);
 	cout << "Its colour is " << color << endl;
 	
 	++counterAllOut;
 	waitKey(0);
-	if(pixImg.at<uchar>(PrevPtMod) == black)
+	if(pixImg.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
 
 		cout << "Coloured 100" << endl;
-		pixImg.at<uchar>(PrevPtMod) = 100; //zaznacza na ciemny szary uwzglednione pixele
+		pixImg.at<Vec3b>(PrevPtMod) = COLORS.blue; //zaznacza na ciemny szary uwzglednione pixele
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
 		return PrevPtMod;

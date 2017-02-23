@@ -23,7 +23,7 @@ const colors COLORS =
 	Vec3b(0,0,255),
 	Vec3b(0,0,0),
 	Vec3b(255,255,255),
-	Vec3b(127,127,127)
+	Vec3b(205,205,205)
 };
 
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
@@ -82,7 +82,8 @@ int main( int argc, char* argv[] )
 	Mat auxRgbMap = srcRgbImg.clone();
 	
 	//Gray pixels to black:
-	colorChangeAllRgb(auxRgbMap, Vec3b(205, 205, 205), Vec3b(255, 255, 255));
+	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
+	//Vec3b(205, 205, 205), Vec3b(255, 255, 255));
 	
 	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
