@@ -16,6 +16,17 @@ using namespace std;
 
 /// Global variables
 
+//BGR
+const colors COLORS = 
+{
+	Vec3b(255,0,0),
+	Vec3b(0,255,0),
+	Vec3b(0,0,255),
+	Vec3b(0,0,0),
+	Vec3b(255,255,255),
+	Vec3b(205,205,205)
+};
+
 Mat src, src_gray, gb, src_gray2, src_gray3, src_gray_big;
 Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, mapaRobocza;
 
@@ -64,6 +75,8 @@ void callFunctions(Mat &aRgbMapR, int width, int &minLenght, int &maxGap, int &t
 	//threshold[, lines[, minLineLength[, maxLineGap]]]
 	//bitset<1> valuesChangeSaved;
 	//valuesChangeSaved.set();
+	
+	colorChangeAllRgb(aRgbMapR, COLORS.grey, COLORS.black);
 	
 	while(true)
 	{

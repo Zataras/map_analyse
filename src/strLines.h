@@ -28,6 +28,17 @@ using namespace cv;
 using namespace std;
 
 /// Global variables
+
+struct colors
+{
+	Vec3b blue;
+	Vec3b green;
+	Vec3b red;
+	Vec3b black;
+	Vec3b white;
+	Vec3b grey;
+};
+
 extern Mat src, src_gray, gb, src_gray2, src_gray3, src_gray_big;
 extern Mat dst, detected_edges, detected_edges2, color_dst, color_dst2, color_dst3, mapaRobocza;
 extern int kolor;
@@ -52,11 +63,9 @@ Matrix: 64FC1 3x2
 Its worth noting that there are also Matrix methods Mat::depth() and Mat::channels(). This function is just a handy way of getting a human readable interpretation from the combination of those two values whose bits are all stored in the same value.*/
 string type2str(int type);
 
-//szary na czarny:
-//changes grey pixels to black to avoid double parallel lines:
-//takes references and changes dst colours
-//third arg is colour of grey
-void Gr2Bl(Mat &srcImg, Mat &dstImg, int grey);
+//changes one color pixels to another to avoid double parallel lines:
+//takes references and changes to dst colour
+void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
 //podaj początkowy punkt, poszukiwanie inkrementuje x i y
 //pass start point, searches and increments x and y coordinates
