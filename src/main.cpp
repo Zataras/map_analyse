@@ -82,10 +82,12 @@ void callFunctions(Mat &aRgbMapR, int width, int &minLenght, int &maxGap, int &t
 	{
 		clonedRgbMap = aRgbMapR.clone();
 		cvtColor( aRgbMapR, greyMap, CV_BGR2GRAY );
-		Canny( greyMap, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
+		int blur_out = 3;
+		medianBlur ( aRgbMapR, aRgbMapR, blur_out );
+		Canny( aRgbMapR, detected_edges, lowThreshold, lowThreshold*ratio, kernel_size );
 		vector<Vec4i> lines;
 		//valuesChangeSaved = valuesChange;
-	  	HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP );
+	  	/*HoughLinesP( detected_edges, lines, 1, CV_PI/180, minLenght, maxGap, thresholdHLP ); //uncomment
 	  	for( size_t i = 0; i < lines.size(); i++ )
 	  	{
 			//cout << "Linia numer: " << i << endl;
@@ -94,8 +96,9 @@ void callFunctions(Mat &aRgbMapR, int width, int &minLenght, int &maxGap, int &t
 			//C++: void line(Mat& img, Point pt1, Point pt2, const Scalar& color, int thickness=1, int lineType=8, int 		shift=0)
 			line( clonedRgbMap, Point(lines[i][0], lines[i][1]),
 			Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8 );
-	  	}
-	  	showResized(clonedRgbMap, window_name, 2.0, 100);
+	  	}*/
+	  	//showResized(clonedRgbMap, window_name, 2.0, 100);
+	  	showResized(detected_edges, window_name, 2.0, 100);
   	//}
 	}
   	
