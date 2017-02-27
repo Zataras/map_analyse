@@ -83,7 +83,15 @@ int main( int argc, char* argv[] )
 	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
-	//Vec3b(205, 205, 205), Vec3b(255, 255, 255));
+	
+	//expose edges
+	int blur_out = 3;
+	Mat edgesRgbMap = auxRgbMap.clone();
+	medianBlur ( auxRgbMap, edgesRgbMap, blur_out );
+	Mat greyMap;
+	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
+	Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
+	showResized(edgesRgbMap, "testMap", 2.5, 0); //debug
 	
 	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
