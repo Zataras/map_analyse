@@ -86,6 +86,7 @@ int main( int argc, char* argv[] )
 	
 	//expose edges
 	int blur_out = 3;
+	lowThreshold = 15;
 	Mat edgesRgbMap = auxRgbMap.clone();
 	medianBlur ( auxRgbMap, edgesRgbMap, blur_out );
 	Mat greyMap;
