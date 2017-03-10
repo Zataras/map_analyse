@@ -104,7 +104,9 @@ int main( int argc, char* argv[] )
 	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
 	//that map will be compared with oryginal
-	createMapOfMeanLines(srcRgbImg, auxRgbMap);
+	bitwise_not ( edgesRgbMap, edgesRgbMap );
+	cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
+	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	//here has to put comparing function with at least two Mat arguments
 	

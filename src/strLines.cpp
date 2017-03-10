@@ -58,7 +58,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 	Point pt(0,0), diffPt;
 	bool minLineLenReached, lookInRevDir;
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
-	int diffSumLimit = 5, lineLenghtMin = 50, dirChangeLimit = 3;
+	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
 	
 	//until reaches map's last pixel
 	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
@@ -69,7 +69,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 		lookInRevDir = false; minLineLenReached = false;
 		currDir = -1;
 
-		cout << "New cycle" <<endl;
+		cout << __LINE__ << ": New cycle" <<endl;
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
 		//cout << pt << endl; //debug
@@ -154,7 +154,10 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 
 			//set true if reached
 			if( lineLength > lineLenghtMin )
+			{
 				minLineLenReached = true;
+				cout << __LINE__ << ": Line accepted" << endl;
+			}
 				
 			if( lookInRevDir ) //if accepted to analyse
 			{
@@ -205,8 +208,8 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	Point nextPt(-1,-1);
 
 	//cout << "In findNextPixelEdge" << endl;
-	nextPt = checkSpecDirection( aImgR, actPt, prevPt, 3, lookInRevDir );
-	cout << "Next point is " << nextPt << endl;
+	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 3, lookInRevDir );
+	cout << __LINE__ << ": Next point is " << nextPt << endl;
 
 	if( !lookInRevDir )
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
@@ -215,7 +218,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 }
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
-Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bool lookInRevDir )// pt = point
+Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bool lookInRevDir )// pt = point
 {
 	Vec3b wantedColor;	
 	Point foundPt( -1, -1 ), modPt; 
@@ -250,6 +253,7 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 						modPt = actPt + Point( +(mG - 1), -rad );
 					break;
 				}
+				cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				if( srcImg.at<Vec3b>(modPt) == wantedColor && modPt != prevPt )
 				{	
 					foundPt = modPt;
@@ -477,7 +481,7 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 // 0 - not defined;
 int checkDirection(Point prevPt, Point actPt, Point nextPt)
 {
-	cout << "In checkDirection" << endl;
+	cout << __LINE__ << ": In checkDirection" << endl;
 	int direction = 0;	
 
 	Point diffPt1 = actPt - prevPt;
@@ -489,7 +493,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 	if( abs(diffPt1.y) == 1 && abs(diffPt2.y) == 1 )
 		if( abs(diffPt1.x) == 0 || abs(diffPt2.x) == 0 ) //or until diagonal analysed
 			direction = 2; // horizontal
-
+	
 	return direction;
 }
 
@@ -501,7 +505,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 //okresla ile pixeli w najblizszym otoczeniu linii nie nalezy do linii
 //okreslic jako linie tylko dlugie proste i tylko je analizowac
 //wyszlo probnie ze odchylenie st. = 0.0878308 
-int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
+/*int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 {
 	cout << "In countStdDev" << endl;
 	//int val = src_gray.at<uchar>(x, y);//wartosc pixela w (x,y)
@@ -684,4 +688,4 @@ int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
 	cout << "linesCounter = " << linesCounter << endl;
 	cout << "Odchylenie standardowe = " << dokladnosc << " px" << endl;
 	return 0;
-}
+*/
