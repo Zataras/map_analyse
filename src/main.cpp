@@ -10,8 +10,11 @@
 //#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
 
+#define SHOW(obj) cout << #obj << " = " << (obj) << endl;//nice function for debug
+
 using namespace cv;
 using namespace std;
+ 
  
 /// Global variables
 
@@ -84,15 +87,19 @@ int main( int argc, char* argv[] )
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
 	
-	//expose edges
-	int blur_out = 3;
-	lowThreshold = 15;
-	Mat edgesRgbMap = auxRgbMap.clone();
-	medianBlur ( auxRgbMap, edgesRgbMap, blur_out );
-	Mat greyMap;
-	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
-	Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
-	showResized(edgesRgbMap, "testMap", 2.5, 0); //debug
+	//for(int i=1; i<=1; i+=2)
+	//{
+		//expose edges
+		int blur_out = 3;
+		lowThreshold = 70;
+		Mat edgesRgbMap = auxRgbMap.clone();
+		medianBlur ( auxRgbMap, auxRgbMap, blur_out );
+		Mat greyMap;
+		cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
+		Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
+		//SHOW(i); 
+		showResized(edgesRgbMap, "testMap", 2.5, 1); //debug
+	//}
 	
 	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
