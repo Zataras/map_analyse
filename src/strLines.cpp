@@ -98,13 +98,13 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
 			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug			
 			
-			cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
+			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
 			lineLength++;
 			//------------------------------------------
 			//check current direction of last 3 pixels
 			direction = checkDirection( prevPt, actPt, nextPt );
-			cout << __LINE__ << ": Dir is " << direction << endl;
+			//cout << __LINE__ << ": Dir is " << direction << endl;
 			
 			//count whole coordinate change if direction is opposite to currently analysed
 			//to check if limit is not exceeded
@@ -138,14 +138,33 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 					lookInRevDir = true;
 					dirChangeCount = -1;
 					reachedLen = lineLength;
-					//cout << "Direction changed and min len reached = " << lineLength << endl;
+					SHOW("Direction changed and min len reached");
+					SHOW(lineLength);
 					lineLength = 0;
 				}
 				else
 				{
 					//if not set -1 and this series will be ommited
-					cout << __LINE__ << ": dir change limit exceeded" << endl;
+					SHOW(""); cout << "	dir change limit exceeded" << endl;
 					nextPt.x = -1;
+				}
+			}
+			
+			if (nextPt.x == -1)
+			{
+				if( minLineLenReached )
+				{
+					lookInRevDir = true;
+					dirChangeCount = -1;
+					reachedLen = lineLength;
+					SHOW(lineLength); cout << "	Next point not found, but min len reached" << endl;
+					lineLength = 0;
+					nextPt.x == -2;//
+				}
+				else
+				{
+					//if not set -1 and this series will be ommited
+					SHOW(nextPt.x);
 				}
 			}
 			
@@ -167,7 +186,8 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 				
 			if( lookInRevDir ) //if accepted to analyse
 			{
-				//dokladnosc = countTrueMean(pixImg, prevPoint, actPoint, otoczenie, currDir);
+				int otoczenie = 5;
+				float dokladnosc = countTrueMean(aAuxRgbMap, prevPt, actPt, otoczenie, currDir);
 				//if( dokladnosc >= 0 ){
 					//sum2 = sum2 + dokladnosc;
 					//sum = sum + dokladnosc;
@@ -215,7 +235,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 
 	//cout << "In findNextPixelEdge" << endl;
 	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 3, lookInRevDir );
-	cout << __LINE__ << ": Next point is " << nextPt << endl;
+	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
 	if( !lookInRevDir )
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
@@ -259,7 +279,7 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 						modPt = actPt + Point( +(mG - 1), -rad );
 					break;
 				}
-				cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
+				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				if( srcImg.at<Vec3b>(modPt) == wantedColor && modPt != prevPt )
 				{	
 					foundPt = modPt;
@@ -279,10 +299,10 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 {
 	bool retVal = false;
-	Point diffPoint = refPt - checkPt;
+	Point diffPt = refPt - checkPt;
 	if( refPt != checkPt )	
-		if( abs(diffPoint.x) != 1 )
-			if( abs(diffPoint.y) != 1 )
+		if( abs(diffPt.x) != 1 )
+			if( abs(diffPt.y) != 1 )
 				retVal = true;
 	return retVal;
 }
@@ -301,7 +321,7 @@ Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArrayS
 	{
 
 		cout << "Coloured 100" << endl;
-		pixImg.at<Vec3b>(PrevPtMod) = COLORS.blue; //zaznacza na ciemny szary uwzglednione pixele
+		pixImg.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixele
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
 		return PrevPtMod;
@@ -313,14 +333,14 @@ Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArrayS
 	
 }
 
-float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int currDir)
+float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, int currDir)
 {
 	int counterAll = 0, counterAllEdge = 0, counterAllOut = 0;
 	int counterFound = 0, counterFoundEdge = 0, counterFoundOut = 0;
 	uchar black = 0;
-	Point diffPoint;
+	//Point diffPt;
 	
-	cout << "In countTrueMean with dir " << currDir << endl;
+	cout << __LINE__ << ": In countTrueMean with dir " << currDir << endl;
 	
 	int pointsArraySize = width * 2 + 1;
 	Point pointsArray[pointsArraySize]; //create array to keep checked points's values
@@ -342,57 +362,57 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 	*/
 
   	//Czy pixel niby usredniony przez filtr jest czarny?:
-	if(pixImg.at<uchar>(prevPt.x, prevPt.y) == black)
+	if(aRgbEdgeMapR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
 	{
 		pointsArray[0] = prevPt;
-		pixImg.at<uchar>(PrevPtMod) = 80;
+		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.grey;
 		cout << "should be colored" << endl;
 		++counterAllOut;
 	}
 	//{
-	diffPoint = actPt - prevPt;
- 	//cout <<"diffPoint = " << diffPoint << endl;
-	if(currDir == 1)//( diffPoint.x != 0 )
+	Point diffPt = actPt - prevPt;
+ 	//cout <<"diffPt = " << diffPt << endl;
+	if(currDir == 1)//( diffPt.x != 0 )
 	{
-		//if( diffPoint.y == 0 )//then look in vertical direction
+		//if( diffPt.y == 0 )//then look in vertical direction
 		//{
 			for( int i = 1; i<=width; i++ )
 			{
 				//check in both vertical directions
 				//cout <<"counterAll: " << ++counterAll << endl;
-				if( prevPt.y + i <= pixImg.cols ){ // if not exceeds maps size - cols px
+				if( prevPt.y + i <= aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y + i;
-					pixImg.at<uchar>(PrevPtMod) = 150;
-					pointsArray[i] = countTrueMeanInt(pixImg, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				
 				if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y - i;
-					pixImg.at<uchar>(PrevPtMod) = 150;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(pixImg, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
 	}
-	if(currDir == 2)//( diffPoint.y != 0 )
+	if(currDir == 2)//( diffPt.y != 0 )
 	{
-		//if( diffPoint.x == 0 ){//then look in vertical direction
+		//if( diffPt.x == 0 ){//then look in vertical direction
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
-				if( prevPt.x + i <= pixImg.rows ){
+				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
-					pixImg.at<uchar>(PrevPtMod) = 150;
-					pointsArray[i] = countTrueMeanInt(pixImg, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				if( prevPt.x - i >= 0 ){
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
-					pixImg.at<uchar>(PrevPtMod) = 150;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(pixImg, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
@@ -419,8 +439,8 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 	}
 	if(meanCounter){ // > 1){
 		//cout << "!!!!!!!!!!!!Mean point is " << meanPt << endl;
-		detected_edges2.at<uchar>(meanPt.x, meanPt.y) = 200;
-		pixImg.at<uchar>(meanPt.x, meanPt.y) = 220;//to psuje obliczenia
+		detected_edges2.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
+		aRgbEdgeMapR.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;//to psuje obliczenia
 	}
 	else
 		cout << "Couldn't count mean at: " << meanPt.x << endl;
@@ -464,13 +484,7 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 
 	width = maxWidth;
 
-	Mat pixImgBig;
-
-	resize(pixImg, pixImgBig, Size(), 2.5, 2.5, INTER_CUBIC);
-	namedWindow( "Curent State pixImg", WINDOW_AUTOSIZE ); //uncomment to see image
-	//imshow( "Curent State pixImg", pixImg ); //uncomment to see image
-	imshow( "Curent State pixImg", pixImgBig );
-   waitKey(1);	//uncomment to see image
+	showResized(aRgbEdgeMapR, "aRgbEdgeMapR", 2.5, 1); //debug
   
   return s;
 	
@@ -493,7 +507,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 	Point diffActPrev = actPt - prevPt;
 	Point diffNextAct = nextPt - actPt;
 	
-	cout << __LINE__ << "diffs are: " << diffActPrev << diffNextAct << endl;
+	//cout << __LINE__ << ": diffs are: " << diffActPrev << diffNextAct << endl;
  
 	if( abs(diffActPrev.x) == 1 && abs(diffNextAct.x) == 1 )
 		if( abs(diffActPrev.y) == 0 || abs(diffNextAct.y) == 0 ) //or until diagonal analysed
@@ -513,64 +527,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 //okresla ile pixeli w najblizszym otoczeniu linii nie nalezy do linii
 //okreslic jako linie tylko dlugie proste i tylko je analizowac
 //wyszlo probnie ze odchylenie st. = 0.0878308 
-/*int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie)
-{
-	cout << "In countStdDev" << endl;
-	//int val = src_gray.at<uchar>(x, y);//wartosc pixela w (x,y)
-	//skanuj mapę edges w poszukiwaniu białych pixeli:
-	//mapaRobocza = Scalar::all(0);
-	//src.copyTo( mapaRobocza, detected_edges);
-	int linesCounter = 0;
-	float sum = 0.0, sum2 = 0.0;
-	int sum3 = 0;
-	float dokladnosc;
-	int ile = 0, ile2 = 0, ile3 = 0;
-	int longest = 0, ileDlugich = 0;
-	Point pt(0,0);
-	cvtColor( detected_edges2, color_dst3, CV_GRAY2BGR );
-	int lines[4];
-	
-	//until reaches map's last pixel
-	while(pt.x  < (edgeImg.rows) || pt.y < (edgeImg.cols))
-	{
-		//cout << "new cycle"<< endl;	
-			//pt = lookForWhitePxls(edgeImg, pt);
-		
-		Point nextPoint = pt, actPoint = pt, prevPoint = pt;
-		int tempInt = edgeImg.at<uchar>(pt.x, pt.y);
-		//cout << "Value at found point is: " << tempInt << endl ;
-
-		//for(int i = 0; i <= 3; i++){
-		//cout << "iteracja: " << i << endl;
-		linesCounter++;
-		int lineLength;
-		sum2 = 0;
-		ile2 = 0;
-		int index = 0;
-		lines[0] = pt.y;
-		lines[1] = pt.x;
-
-		int dirChangeCount;
-		int dirChangeLimit; 
-		int lineLenghtMin = 50;
-		int direction;
-		int currDir;
-		bool minLineLenReached;
-		bool lookInRevDir;
-		int reachedLen;
-
-		dirChangeLimit = 3; 
-		lookInRevDir = false;
-		minLineLenReached = false;
-		reachedLen = 0;
-		currDir = -1;
-		dirChangeCount = 0;
-		lineLength = 0;
-		
-		Point diffPt;
-		int diffSum;
-		int diffSumLimit = 5;
-		diffSum = 0;
+/*
 
 		//while there is still any not analysed pixel
 		while( nextPoint.x != -1 )

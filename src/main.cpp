@@ -10,8 +10,6 @@
 //#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
 
-#define SHOW(obj) cout << #obj << " = " << (obj) << endl;//nice function for debug
-
 using namespace cv;
 using namespace std;
  
@@ -26,7 +24,8 @@ const colors COLORS =
 	Vec3b(0,0,255),
 	Vec3b(0,0,0),
 	Vec3b(255,255,255),
-	Vec3b(205,205,205)
+	Vec3b(205,205,205),
+	Vec3b(255,255,0)
 };
 
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
@@ -44,6 +43,8 @@ const char* window_name = str.c_str();
 int ANALYSED_PX = 0;
 
 void CannyThreshold(int, void*);
+
+//void coutLine(int line)
 
 void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 {

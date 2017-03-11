@@ -24,6 +24,8 @@
 							// std::fill_n(array, 100, -1);
 //#include <unistd.h>//usleep
 
+#define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << endl;//nice function for debug
+
 using namespace cv;
 using namespace std;
 
@@ -35,6 +37,7 @@ struct colors
 	Vec3b black;
 	Vec3b white;
 	Vec3b grey;
+	Vec3b yellow;
 };
 
 /// Global variables
