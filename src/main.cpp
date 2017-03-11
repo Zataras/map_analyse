@@ -98,7 +98,7 @@ int main( int argc, char* argv[] )
 		cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
 		Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
 		//SHOW(i); 
-		showResized(edgesRgbMap, "testMap", 2.5, 1); //debug
+		//showResized(edgesRgbMap, "testMap", 2.5, 1); //debug
 	//}
 	
 	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);

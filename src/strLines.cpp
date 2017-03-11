@@ -78,8 +78,6 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 		//while there is still any not analysed pixel
 		while( nextPt.x != -1 )
 		{
-			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
-			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
 			
 			//update points values
 			if( !lookInRevDir || lineLength != 0 )
@@ -97,10 +95,16 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 				}			
 			}
 			
+			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
+			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug			
+			
+			cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
+			
 			lineLength++;
 			//------------------------------------------
 			//check current direction of last 3 pixels
 			direction = checkDirection( prevPt, actPt, nextPt );
+			cout << __LINE__ << ": Dir is " << direction << endl;
 			
 			//count whole coordinate change if direction is opposite to currently analysed
 			//to check if limit is not exceeded
@@ -124,6 +128,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 			//if sum of direction changes or whole coordinate change limit is exceed 
 			//then check if line has reched minimum length
 			//is yes it will be further analysed
+			
 			if ( dirChangeCount > dirChangeLimit || diffSum > diffSumLimit )
 			{
 				//currDir = -1;
@@ -139,6 +144,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 				else
 				{
 					//if not set -1 and this series will be ommited
+					cout << __LINE__ << ": dir change limit exceeded" << endl;
 					nextPt.x = -1;
 				}
 			}
@@ -481,17 +487,19 @@ float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int cu
 // 0 - not defined;
 int checkDirection(Point prevPt, Point actPt, Point nextPt)
 {
-	cout << __LINE__ << ": In checkDirection" << endl;
+	//cout << __LINE__ << ": In checkDirection" << endl;
 	int direction = 0;	
 
-	Point diffPt1 = actPt - prevPt;
-	Point diffPt2 = nextPt - actPt;
-
-	if( abs(diffPt1.x) == 1 && abs(diffPt2.x) == 1 )
-		if( abs(diffPt1.y) == 0 || abs(diffPt2.y) == 0 ) //or until diagonal analysed
+	Point diffActPrev = actPt - prevPt;
+	Point diffNextAct = nextPt - actPt;
+	
+	cout << __LINE__ << "diffs are: " << diffActPrev << diffNextAct << endl;
+ 
+	if( abs(diffActPrev.x) == 1 && abs(diffNextAct.x) == 1 )
+		if( abs(diffActPrev.y) == 0 || abs(diffNextAct.y) == 0 ) //or until diagonal analysed
 			direction = 1; // vertical
-	if( abs(diffPt1.y) == 1 && abs(diffPt2.y) == 1 )
-		if( abs(diffPt1.x) == 0 || abs(diffPt2.x) == 0 ) //or until diagonal analysed
+	if( abs(diffActPrev.y) == 1 && abs(diffNextAct.y) == 1 )
+		if( abs(diffActPrev.x) == 0 || abs(diffNextAct.x) == 0 ) //or until diagonal analysed
 			direction = 2; // horizontal
 	
 	return direction;
