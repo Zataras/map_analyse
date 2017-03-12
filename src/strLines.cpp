@@ -83,7 +83,7 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 	}
 }
 
-void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
+void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	Point pt(0,0), diffPt;
 	bool minLineLenReached, lookInRevDir;
@@ -91,7 +91,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
 	
 	//until reaches map's last pixel
-	while(pt.x  < (caSrcRgbImgR.rows) || pt.y < (caSrcRgbImgR.cols))
+	while(pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols))
 	{	
 		linesCounter++;
 		lineLength = 0; reachedLen = 0;
@@ -217,7 +217,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 			if( lookInRevDir ) //if accepted to analyse
 			{
 				int otoczenie = 5;
-				float dokladnosc = countTrueMean(aAuxRgbMap, prevPt, actPt, otoczenie, currDir);
+				float dokladnosc = countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
 				//if( dokladnosc >= 0 ){
 					//sum2 = sum2 + dokladnosc;
 					//sum = sum + dokladnosc;
@@ -337,22 +337,24 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 	return retVal;
 }
 
-Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
+Point countTrueMeanInt(Mat &aSrcRgbImgR, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
+	static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
 	SHOW(PrevPtMod);
 	cout << Color::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
-	cout << pixImg.at<Vec3b>(PrevPtMod) << Color::FG_DEFAULT << endl;
+	cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << Color::FG_DEFAULT << endl;
 	
 	++counterAllOut;
 	//waitKey(0);
 	
-	if(pixImg.at<Vec3b>(PrevPtMod) == COLORS.black )
+	if(aSrcRgbImgR.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
 
 		cout << "Coloured 100" << endl;
-		pixImg.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixele
+		clonedSrcRgbImg.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixele
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
+		showResized(clonedSrcRgbImg, "debug window", 2.0, 0);
 		return PrevPtMod;
 	}
 	else 
@@ -362,7 +364,7 @@ Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArrayS
 	
 }
 
-float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, int currDir)
+float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt, int &width, int currDir)
 {
 	int counterAll = 0, counterAllEdge = 0, counterAllOut = 0;
 	int counterFound = 0, counterFoundEdge = 0, counterFoundOut = 0;
@@ -413,9 +415,9 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 				if( prevPt.y + i <= aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y + i;
-					SHOW("");
+					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				
 				if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
@@ -423,7 +425,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 					PrevPtMod.y = prevPt.y - i;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
@@ -437,16 +439,16 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
-					SHOW("");
+					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				if( prevPt.x - i >= 0 ){
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
-					SHOW("");
+					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
@@ -458,7 +460,8 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 	Point meanPt;
 	for(int  i = 0; i <= pointsArraySize - 1; i++)
 	{	
-		//cout << "pointsArray[" << i << "] = " << pointsArray[i] << endl;
+		string message = "pointsArray[" + to_string(i) + "] = " + to_string(pointsArray[i].x) + ", " + to_string(pointsArray[i].y);
+		SHOW(message);
 		if(pointsArray[i]. x != -1)
 		{
 			meanCounter++;
