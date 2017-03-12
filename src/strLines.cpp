@@ -96,7 +96,7 @@ void createMapOfMeanLines(const Mat &caSrcRgbImgR, Mat &aAuxRgbMap)
 			}
 			
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
-			showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug			
+			showResized(aAuxRgbMap, "debug window", 2.5, 1); //debug			
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -249,7 +249,7 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 	Vec3b wantedColor;	
 	Point foundPt( -1, -1 ), modPt; 
 	if( lookInRevDir )
-		wantedColor = COLORS.grey;
+		wantedColor = COLORS.red;
 	else
 		wantedColor = COLORS.black;
 	bool found = false;
@@ -309,11 +309,9 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 
 Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
-	//uchar black = 0;
-	cout << "In countTrueMeanInt" << endl;
-	cout << "Checking " << PrevPtMod << endl;
-	Vec3b color = pixImg.at<Vec3b>(PrevPtMod);
-	cout << "Its colour is " << color << endl;
+	SHOW(PrevPtMod);
+	cout << "	Checking above point in countTrueMeanInt. Its colour is ";
+	cout << pixImg.at<Vec3b>(PrevPtMod) << endl;
 	
 	++counterAllOut;
 	waitKey(0);
@@ -443,7 +441,11 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 		aRgbEdgeMapR.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;//to psuje obliczenia
 	}
 	else
-		cout << "Couldn't count mean at: " << meanPt.x << endl;
+	{
+		int i = 0;
+		string message = "Couldn't count mean at: " + to_string(i);//meanPt.x);
+		SHOW(message);
+	}
 	
 	float sumSqrXi = 0; // for counting standart deviation
 	
@@ -484,7 +486,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "aRgbEdgeMapR", 2.5, 1); //debug
+	showResized(aRgbEdgeMapR, "debug window", 2.5, 0); //debug
   
   return s;
 	

@@ -23,6 +23,7 @@
 #include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>): 
 							// std::fill_n(array, 100, -1);
 //#include <unistd.h>//usleep
+#include <string> //to_string
 
 #define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << endl;//nice function for debug
 
