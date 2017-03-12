@@ -24,6 +24,7 @@
 							// std::fill_n(array, 100, -1);
 //#include <unistd.h>//usleep
 #include <string> //to_string
+#include <ostream>//font colors
 
 #define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << endl;//nice function for debug
 
@@ -46,6 +47,7 @@ extern const colors COLORS;
 
 extern Mat  detected_edges, detected_edges2, mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
+
 
 //displays input image resized with specified factor
 //time specifies argument for WaitKey(timeMs)

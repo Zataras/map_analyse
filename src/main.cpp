@@ -28,6 +28,8 @@ const colors COLORS =
 	Vec3b(255,255,0)
 };
 
+
+
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
 
 int edgeThresh = 1;

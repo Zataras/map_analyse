@@ -1,7 +1,3 @@
-launcher
-CMakeCache.txt
-CMakeFiles/
-Makefile
-cmake_install.cmake
 local/
 old/
+build/**

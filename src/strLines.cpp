@@ -6,6 +6,36 @@
 
 #include "strLines.h"
 
+//usage e.g. cout << Color::FG_RED << "text";
+namespace Color {
+    enum Code {
+        FG_RED      		= 31,
+        FG_GREEN    		= 32,
+        FG_BLUE     		= 34,
+        FG_BLACK 	  		= 30,
+        FG_YELLOW 		= 33,
+        FG_MAGENTA 		= 35,
+        FG_CYAN 			= 36,
+        FG_LIGHT_GRAY 	= 37, 
+        FG_DARK_GRAY 	= 90, 
+        FG_LIGHT_RED 	= 91, 
+        FG_LIGHT_GREEN 	= 92, 
+        FG_LIGHT_YELLOW = 93, 
+        FG_LIGHT_BLUE 	= 94, 
+        FG_LIGHT_MAGENTA= 95, 
+        FG_LIGHT_CYAN 	= 96, 
+        FG_WHITE 			= 97,
+        FG_DEFAULT  		= 39,
+        BG_RED      = 41,
+        BG_GREEN    = 42,
+        BG_BLUE     = 44,
+        BG_DEFAULT  = 49
+    };
+    std::ostream& operator<<(std::ostream& os, Code code) {
+        return os << "\033[" << static_cast<int>(code) << "m";
+    }
+}
+
 void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs)
 {
 	Mat bigImg;
@@ -310,11 +340,12 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
 	SHOW(PrevPtMod);
-	cout << "	Checking above point in countTrueMeanInt. Its colour is ";
-	cout << pixImg.at<Vec3b>(PrevPtMod) << endl;
+	cout << Color::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
+	cout << pixImg.at<Vec3b>(PrevPtMod) << Color::FG_DEFAULT << endl;
 	
 	++counterAllOut;
-	waitKey(0);
+	//waitKey(0);
+	
 	if(pixImg.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
 
@@ -367,6 +398,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 		cout << "should be colored" << endl;
 		++counterAllOut;
 	}
+	
 	//{
 	Point diffPt = actPt - prevPt;
  	//cout <<"diffPt = " << diffPt << endl;
@@ -381,6 +413,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 				if( prevPt.y + i <= aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y + i;
+					SHOW("");
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
@@ -388,6 +421,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 				if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y - i;
+					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
@@ -403,12 +437,14 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
+					SHOW("");
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				if( prevPt.x - i >= 0 ){
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
+					SHOW("");
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
@@ -417,7 +453,6 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 	}
 
 	
-	//debug:
 	int meanCounter = 0;
 	Point meanSum(0,0);
 	Point meanPt;
@@ -437,14 +472,14 @@ float countTrueMean(Mat &aRgbEdgeMapR, Point &prevPt, Point &actPt, int &width, 
 	}
 	if(meanCounter){ // > 1){
 		//cout << "!!!!!!!!!!!!Mean point is " << meanPt << endl;
-		detected_edges2.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
+		//a.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
 		aRgbEdgeMapR.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;//to psuje obliczenia
 	}
 	else
 	{
-		int i = 0;
-		string message = "Couldn't count mean at: " + to_string(i);//meanPt.x);
+		string message = "Couldn't count mean at: " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
 		SHOW(message);
+		waitKey(0);
 	}
 	
 	float sumSqrXi = 0; // for counting standart deviation
