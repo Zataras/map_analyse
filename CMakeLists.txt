@@ -8,4 +8,17 @@ include_directories( ${OpenCV_INCLUDE_DIRS} ./src )
 set(HEADER_FILES ./src/strLines.h)
 set(SOURCES ./src/strLines.cpp) #${PROJECT_SOURCE_DIR}/
 add_executable( launcher ./src/main.cpp ${HEADER_FILES} ${SOURCES})
+#check compiler support for C++11
+set_property(TARGET launcher PROPERTY CXX_STANDARD 11)
+set_property(TARGET launcher PROPERTY CXX_STANDARD_REQUIRED ON)
+
 target_link_libraries( launcher ${OpenCV_LIBS})
+
+#check compiler support for C++11
+#message("Your CMake version supports these C++ features:")
+#get_property(known_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
+#foreach(i ${known_features})
+#  message("${i}")
+#endforeach()
+
+
