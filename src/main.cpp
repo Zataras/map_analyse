@@ -25,7 +25,8 @@ const colors COLORS =
 	Vec3b(0,0,0),
 	Vec3b(255,255,255),
 	Vec3b(205,205,205),
-	Vec3b(255,255,0)
+	Vec3b(255,255,0),
+	Vec3b(255,153,0)
 };
 
 
@@ -71,6 +72,8 @@ int main( int argc, char* argv[] )
   	if( !srcRgbImg.data )
   		return -1;
 
+	showResized(srcRgbImg, "srcRgbImg", 2.5, 0); //debug
+
 	int width = 6;
 	if( argc > 2 )
 	{
@@ -79,7 +82,9 @@ int main( int argc, char* argv[] )
 	}
 
 	string ty =  type2str( srcRgbImg.type() );
-	printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
+	string message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
+	SHOW(message);
+	//printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
 	
 	//cout << srcRgbImg.rows << " x " << srcRgbImg.cols << endl;
 	//srcRgbImg.at<Vec3b>(Point(373, 403)) = COLORS.green;
@@ -87,19 +92,25 @@ int main( int argc, char* argv[] )
 	//testing:
 	Mat auxRgbMap = srcRgbImg.clone();
 	
+	showResized(auxRgbMap, "auxRgbMap", 2.5, 0); //debug
+	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
 	
 	//for(int i=1; i<=1; i+=2)
 	//{
 		//expose edges
-		int blur_out = 3;
-		lowThreshold = 70;
-		Mat edgesRgbMap = auxRgbMap.clone();
-		medianBlur ( auxRgbMap, auxRgbMap, blur_out );
-		Mat greyMap;
-		cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
-		Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
+	int blur_out = 3;
+	lowThreshold = 70;
+	
+	SHOW("1");
+	
+	Mat edgesRgbMap = auxRgbMap.clone();
+	SHOW("2");
+	medianBlur ( auxRgbMap, auxRgbMap, blur_out );
+	Mat greyMap;
+	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
+	Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
 		//SHOW(i); 
 		//showResized(edgesRgbMap, "testMap", 2.5, 1); //debug
 	//}

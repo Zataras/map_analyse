@@ -40,6 +40,7 @@ struct colors
 	Vec3b white;
 	Vec3b grey;
 	Vec3b yellow;
+	Vec3b orange;
 };
 
 /// Global variables
@@ -73,7 +74,7 @@ string type2str(int type);
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
 //Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
-void createMapOfMeanLines(const Mat &srcRgbImgR, Mat &auxRgbMap);
+void createMapOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
 
 //idea for variable naming convention: [Const][Argument/Local/Static][name][Reference, Pointer]
 //function returns coordinates of first pixel found in specified color on specified image
@@ -93,9 +94,9 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 Point findNextPixelEdge(Mat &srcImg, Point prevPt, Point actPt, bool lookInRevDir);
 
 
-Point countTrueMeanInt(Mat &pixImg, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth);
+Point countTrueMeanInt(Mat &pixImg, Mat &aImgRgbEdgeR, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth);
 
-float countTrueMean(Mat &pixImg, Point &prevPt, Point &actPt, int &width, int currDir);
+float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt, int &width, int currDir);
 //=======================countTrueMean END=================================
 
 //if previous, actual and next points difference points that they

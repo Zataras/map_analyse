@@ -337,9 +337,9 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 	return retVal;
 }
 
-Point countTrueMeanInt(Mat &aSrcRgbImgR, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
+Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
-	static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
+	//static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
 	SHOW(PrevPtMod);
 	cout << Color::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
 	cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << Color::FG_DEFAULT << endl;
@@ -350,11 +350,13 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, /*Point (&pointsArray)[],*/ int pointsA
 	if(aSrcRgbImgR.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
 
-		cout << "Coloured 100" << endl;
-		clonedSrcRgbImg.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixele
+		string message = "Coloured yellow";
+		SHOW(message);
+		aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
+		aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
-		showResized(clonedSrcRgbImg, "debug window", 2.0, 0);
+		showResized(aSrcRgbImgR, "SrcRgbImg", 2.5, 0);
 		return PrevPtMod;
 	}
 	else 
@@ -393,11 +395,13 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	*/
 
   	//Czy pixel niby usredniony przez filtr jest czarny?:
-	if(aRgbEdgeMapR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
+	if(aSrcRgbImgR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
 	{
 		pointsArray[0] = prevPt;
-		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.grey;
-		cout << "should be colored" << endl;
+		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
+		aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.orange;
+		string message = "should be colored orange";
+		SHOW(message);
 		++counterAllOut;
 	}
 	
@@ -417,7 +421,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 					PrevPtMod.y = prevPt.y + i;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				
 				if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
@@ -425,7 +429,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 					PrevPtMod.y = prevPt.y - i;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
@@ -441,14 +445,14 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				if( prevPt.x - i >= 0 ){
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 			}
 		//}
