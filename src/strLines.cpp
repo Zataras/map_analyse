@@ -41,6 +41,9 @@ void showResized(const Mat &srcImg, const string& winname, double factor, int ti
 	Mat bigImg;
 	//INTER_NEAREST do not fuzz pixels
 	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
+	//string ty =  type2str( bigImg.type() );
+	//string message = "Matrix: " + ty + " " + to_string(bigImg.cols) + "x" + to_string(bigImg.rows);
+	//SHOW(message);
 	namedWindow(winname, WINDOW_AUTOSIZE);
 	imshow(winname, bigImg);
 	waitKey(timeMs);
@@ -67,6 +70,22 @@ string type2str(int type) {
   r += (chans+'0');
 
   return r;
+}
+
+void onMouse(int evt, int x, int y, int flags, void* param) {
+    if(evt == EVENT_LBUTTONDOWN) {
+        //Point* ptPtr = (Point*)param;
+        Point Pt = Point(x,y);
+        Pt.x = round(Pt.x / resizeFactor);
+        Pt.y = round(Pt.y / resizeFactor);
+        Vec3b keptColor = edgesRgbMap.at<Vec3b>(Pt);
+        edgesRgbMap.at<Vec3b>(Pt) = COLORS.red;
+        showResized(edgesRgbMap, "debug window", resizeFactor, 500);
+        edgesRgbMap.at<Vec3b>(Pt) = keptColor;
+        showResized(edgesRgbMap, "debug window", resizeFactor, 1);
+        
+        cout << "clicked on " << Pt << endl;
+    }
 }
 
 //change grey pixels to black to avoid double parallel lines:
@@ -126,7 +145,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			}
 			
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
-			showResized(aAuxRgbMap, "debug window", 2.5, 1); //debug			
+			showResized(aAuxRgbMap, "debug window", resizeFactor, 0); //debug			
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -244,7 +263,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( pxColour == aColour)
 			{
 				stop = true;
-				aImgR.at<Vec3b>(pt) = COLORS.green; //for debug
+				//aImgR.at<Vec3b>(pt) = COLORS.green; //for debug
 			}
 
 			if( !stop )			
@@ -356,7 +375,7 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 		aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
-		showResized(aSrcRgbImgR, "SrcRgbImg", 2.5, 0);
+		//showResized(aSrcRgbImgR, "SrcRgbImg", 2.5, 0);
 		return PrevPtMod;
 	}
 	else 
@@ -398,8 +417,8 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	if(aSrcRgbImgR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
 	{
 		pointsArray[0] = prevPt;
-		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
-		aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.orange;
+		//aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
+		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.orange;
 		string message = "should be colored orange";
 		SHOW(message);
 		++counterAllOut;
@@ -440,7 +459,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
-				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
+				if( prevPt.x + i < aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
@@ -477,13 +496,15 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		meanPt.x = meanSum.x / meanCounter;
 		meanPt.y = meanSum.y / meanCounter;
 	}
-	if(meanCounter){ // > 1){
-		//cout << "!!!!!!!!!!!!Mean point is " << meanPt << endl;
+	if(meanCounter) // > 1){
+	{
+		string message = "!!!!!!!!!!!!Mean point is " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
+		SHOW(message);
 		//a.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
-		aRgbEdgeMapR.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;//to psuje obliczenia
+		aSrcRgbImgR.at<Vec3b>(meanPt) = COLORS.grey;//to psuje obliczenia
 	}
 	else
-	{
+	{ 
 		string message = "Couldn't count mean at: " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
 		SHOW(message);
 		waitKey(0);
@@ -528,7 +549,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", 2.5, 0); //debug
+	showResized(aRgbEdgeMapR, "debug window", 10.0, 0); //debug
   
   return s;
 	

@@ -32,6 +32,9 @@ const colors COLORS =
 
 
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
+Mat edgesRgbMap;
+
+double resizeFactor = 6.0;
 
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;
@@ -77,7 +80,7 @@ int main( int argc, char* argv[] )
   	if( !srcRgbImg.data )
   		return -1;
 
-	showResized(srcRgbImg, "srcRgbImg", 2.5, 0); //debug
+	//showResized(srcRgbImg, "srcRgbImg", 2.5, 0); //debug
 
 	int width = 6;
 	if( argc > 2 )
@@ -105,10 +108,10 @@ int main( int argc, char* argv[] )
 	int blur_out = 3;
 	lowThreshold = 70;
 	
-	SHOW("1");
+	//SHOW("1");
 	
-	Mat edgesRgbMap = auxRgbMap.clone();
-	SHOW("2");
+	edgesRgbMap = auxRgbMap.clone();
+	//SHOW("2");
 	medianBlur ( auxRgbMap, auxRgbMap, blur_out );
 	Mat greyMap;
 	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
@@ -122,6 +125,10 @@ int main( int argc, char* argv[] )
 	//that map will be compared with oryginal
 	bitwise_not ( edgesRgbMap, edgesRgbMap );
 	cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
+	
+	namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
+	setMouseCallback("debug window", onMouse, NULL);
+	
 	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	//here has to put comparing function with at least two Mat arguments

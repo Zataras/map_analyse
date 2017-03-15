@@ -48,7 +48,8 @@ extern const colors COLORS;
 
 extern Mat  detected_edges, detected_edges2, mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
-
+extern double resizeFactor;
+extern Mat edgesRgbMap;
 
 //displays input image resized with specified factor
 //time specifies argument for WaitKey(timeMs)
@@ -68,6 +69,8 @@ Matrix: 64FC1 3x2
 
 Its worth noting that there are also Matrix methods Mat::depth() and Mat::channels(). This function is just a handy way of getting a human readable interpretation from the combination of those two values whose bits are all stored in the same value.*/
 string type2str(int type);
+
+void onMouse(int evt, int x, int y, int flags, void* param);
 
 //changes one color pixels to another to avoid double parallel lines:
 //takes references and changes to dst colour
