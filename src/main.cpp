@@ -63,10 +63,15 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 /** @function main */
 int main( int argc, char* argv[] )
 {
-
-	int minLenght = 35; 
+	//cout << "Press 'c' key to continue";
 	
+	int minLenght = 35; 
+	string message;
 	/// Load an image
+	if (argc < 1) {
+		cout << "Name of image not specified";
+      return -1;
+   }
  	Mat srcRgbImg = imread( argv[1] );
 
   	if( !srcRgbImg.data )
@@ -82,17 +87,14 @@ int main( int argc, char* argv[] )
 	}
 
 	string ty =  type2str( srcRgbImg.type() );
-	string message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
+	message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
 	SHOW(message);
 	//printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
-	
-	//cout << srcRgbImg.rows << " x " << srcRgbImg.cols << endl;
-	//srcRgbImg.at<Vec3b>(Point(373, 403)) = COLORS.green;
 
 	//testing:
 	Mat auxRgbMap = srcRgbImg.clone();
 	
-	showResized(auxRgbMap, "auxRgbMap", 2.5, 0); //debug
+	//showResized(auxRgbMap, "auxRgbMap", 2.5, 0); //debug
 	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);

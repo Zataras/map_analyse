@@ -74,8 +74,8 @@ string type2str(int type) {
 //third arg is colour of grey
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 {
-	for(int x = 0; x <= Img.rows; x++){
-		for(int y = 0; y <= Img.cols; y++){
+	for(int x = 0; x < Img.rows; x++){
+		for(int y = 0; y < Img.cols; y++){
 			//Vec3b pxColor = Img.at<Vec3b>(x, y);
 			if( Img.at<Vec3b>(x, y) == srcColor)
 				Img.at<Vec3b>(x, y) = dstColor;
