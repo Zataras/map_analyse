@@ -79,8 +79,8 @@ void onMouse(int evt, int x, int y, int flags, void* param) {
         Pt.x = round(Pt.x / resizeFactor);
         Pt.y = round(Pt.y / resizeFactor);
         Vec3b keptColor = edgesRgbMap.at<Vec3b>(Pt);
-        edgesRgbMap.at<Vec3b>(Pt) = COLORS.red;
-        showResized(edgesRgbMap, "debug window", resizeFactor, 500);
+        edgesRgbMap.at<Vec3b>(Pt) = COLORS.violet;
+        showResized(edgesRgbMap, "debug window", resizeFactor, 300);
         edgesRgbMap.at<Vec3b>(Pt) = keptColor;
         showResized(edgesRgbMap, "debug window", resizeFactor, 1);
         
@@ -501,7 +501,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		string message = "!!!!!!!!!!!!Mean point is " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
 		SHOW(message);
 		//a.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
-		aSrcRgbImgR.at<Vec3b>(meanPt) = COLORS.grey;//to psuje obliczenia
+		aSrcRgbImgR.at<Vec3b>(meanPt) = COLORS.pink;//to psuje obliczenia
 	}
 	else
 	{ 
@@ -549,7 +549,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", 10.0, 0); //debug
+	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug
   
   return s;
 	

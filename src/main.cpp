@@ -19,14 +19,16 @@ using namespace std;
 //BGR
 const colors COLORS = 
 {
-	Vec3b(255,0,0),
-	Vec3b(0,255,0),
-	Vec3b(0,0,255),
-	Vec3b(0,0,0),
-	Vec3b(255,255,255),
-	Vec3b(205,205,205),
-	Vec3b(255,255,0),
-	Vec3b(255,153,0)
+	Vec3b(255,0,0), 		//blue
+	Vec3b(0,255,0), 		//green
+	Vec3b(0,0,255), 		//red
+	Vec3b(0,0,0),			//black
+	Vec3b(255,255,255),	//white
+	Vec3b(205,205,205),	//grey
+	Vec3b(255,255,0),		//yellow
+	Vec3b(255,153,0),		//orange
+	Vec3b(255,153,255),	//pink
+	Vec3b(153,100,153)	//violet
 };
 
 
@@ -34,7 +36,7 @@ const colors COLORS =
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
 Mat edgesRgbMap;
 
-double resizeFactor = 6.0;
+double resizeFactor = 10.0;
 
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;

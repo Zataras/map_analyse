@@ -41,6 +41,8 @@ struct colors
 	Vec3b grey;
 	Vec3b yellow;
 	Vec3b orange;
+	Vec3b pink;
+	Vec3b violet;
 };
 
 /// Global variables
