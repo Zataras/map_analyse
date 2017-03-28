@@ -174,6 +174,13 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			else
 				dirChangeCount = 0;
 			
+			//set true if reached
+			if( lineLength > lineLenghtMin && ~lookInRevDir )
+			{
+				minLineLenReached = true;
+				cout << __LINE__ << ": Line accepted" << endl;
+			}		
+			
 			//if sum of direction changes or whole coordinate change limit is exceed 
 			//then check if line has reched minimum length
 			//is yes it will be further analysed
@@ -208,7 +215,10 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					reachedLen = lineLength;
 					SHOW(lineLength); cout << "	Next point not found, but min len reached" << endl;
 					lineLength = 0;
-					nextPt.x == -2;//
+					nextPt.x == -2;//why?
+					Point tmpPt = prevPt;
+					prevPt = nextPt;
+					nextPt = tmpPt;
 				}
 				else
 				{
@@ -225,13 +235,6 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 				nextPt.x = -1;
 				ileDlugich++;
 			}*/
-
-			//set true if reached
-			if( lineLength > lineLenghtMin )
-			{
-				minLineLenReached = true;
-				cout << __LINE__ << ": Line accepted" << endl;
-			}
 				
 			if( lookInRevDir ) //if accepted to analyse
 			{
@@ -288,6 +291,8 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 
 	if( !lookInRevDir )
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
+	else
+		aImgR.at<Vec3b>(prevPt) = COLORS.pink; //for debug
 	
 	return nextPt;
 }
@@ -412,6 +417,11 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	rows = s.height;
 	cols = s.width;
 	*/
+	
+	Point diffPt = actPt - prevPt;
+
+	//why has to use prevPoint, why not actPoint??
+	prevPt = actPt;
 
   	//Czy pixel niby usredniony przez filtr jest czarny?:
 	if(aSrcRgbImgR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
@@ -425,7 +435,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	}
 	
 	//{
-	Point diffPt = actPt - prevPt;
+	
  	//cout <<"diffPt = " << diffPt << endl;
 	if(currDir == 1)//( diffPt.x != 0 )
 	{
@@ -459,7 +469,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
-				if( prevPt.x + i < aRgbEdgeMapR.rows ){
+				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;

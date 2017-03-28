@@ -34,9 +34,10 @@ const colors COLORS =
 
 
 Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
-Mat edgesRgbMap;
+Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
 
-double resizeFactor = 10.0;
+double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
+										//when working on different resolutions
 
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;
