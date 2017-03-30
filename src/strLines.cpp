@@ -104,27 +104,34 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 
 void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 {
+	//---------------------------------some variables--------------------------------------
 	Point pt(0,0), diffPt;
 	bool minLineLenReached, lookInRevDir;
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
 	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
+	bool allAnalysed = false;
 	
-	//until reaches map's last pixel
-	while(pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols))
+	//----------------------loop until reaches map's last pixel-----------------------------
+	while(pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols) || allAnalysed)
 	{	
+		//counting any line
 		linesCounter++;
+		//---------initializing every cycle-------------
 		lineLength = 0; reachedLen = 0;
 		dirChangeCount = 0; lineLength = 0; diffSum = 0;
 		lookInRevDir = false; minLineLenReached = false;
 		currDir = -1;
-
+		//----------------debug-------------------
 		cout << __LINE__ << ": New cycle" <<endl;
+		
+		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
-		//showResized(aAuxRgbMap, "aAuxRgbMap", 2.5, 0); //debug
-		//cout << pt << endl; //debug
+		if(pt.x == -1)
+			allAnalysed = true;//doesnt work
+		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
 		
-		//while there is still any not analysed pixel
+		//===while there is still any not analysed pixel in current series===
 		while( nextPt.x != -1 )
 		{
 			
@@ -139,8 +146,8 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 				if( lineLength == 0 )
 				{
 					Point tempPt = nextPt;			
-					nextPt = prevPt; 
-					prevPt = tempPt;
+					//nextPt = prevPt; 
+					//prevPt = tempPt;
 				}			
 			}
 			
@@ -206,23 +213,40 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 				}
 			}
 			
+			if( lookInRevDir ) //if accepted to analyse
+			{
+				int otoczenie = 5;
+				float dokladnosc = countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
+				//if( dokladnosc >= 0 ){
+					//sum2 = sum2 + dokladnosc;
+					//sum = sum + dokladnosc;
+					//ile++;
+					//ile2++;
+				//}
+				//cout << "licze dokladnosc" << endl;
+			}
+			
+			//if next point not found
 			if (nextPt.x == -1)
 			{
 				if( minLineLenReached )
 				{
 					lookInRevDir = true;
+					minLineLenReached = false;
 					dirChangeCount = -1;
+					diffSum = 0;
 					reachedLen = lineLength;
 					SHOW(lineLength); cout << "	Next point not found, but min len reached" << endl;
 					lineLength = 0;
-					nextPt.x == -2;//why?
+					nextPt.x = -2;//to avoid starting new cycle
 					Point tmpPt = prevPt;
-					prevPt = nextPt;
-					nextPt = tmpPt;
+					//nextPt == -1;
+					prevPt = actPt;
+					actPt = tmpPt;
 				}
 				else
 				{
-					//if not set -1 and this series will be ommited
+					//if not leave -1 and this series will be ommited
 					SHOW(nextPt.x);
 				}
 			}
@@ -236,18 +260,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 				ileDlugich++;
 			}*/
 				
-			if( lookInRevDir ) //if accepted to analyse
-			{
-				int otoczenie = 5;
-				float dokladnosc = countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
-				//if( dokladnosc >= 0 ){
-					//sum2 = sum2 + dokladnosc;
-					//sum = sum + dokladnosc;
-					//ile++;
-					//ile2++;
-				//}
-				//cout << "licze dokladnosc" << endl;
-			}
+			
 		}
 	}
 		
@@ -279,22 +292,6 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 		}
 	}
 	return pt;
-}
-
-//szuka kolejnego pixela nalezącego do konturu
-Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir){
-	Point nextPt(-1,-1);
-
-	//cout << "In findNextPixelEdge" << endl;
-	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 3, lookInRevDir );
-	//cout << __LINE__ << ": Next point is " << nextPt << endl;
-
-	if( !lookInRevDir )
-		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
-	else
-		aImgR.at<Vec3b>(prevPt) = COLORS.pink; //for debug
-	
-	return nextPt;
 }
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
@@ -348,6 +345,22 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 	return foundPt;
 }
 
+//szuka kolejnego pixela nalezącego do konturu
+Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir){
+	Point nextPt(-1,-1);
+
+	//cout << "In findNextPixelEdge" << endl;
+	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 3, lookInRevDir );
+	//cout << __LINE__ << ": Next point is " << nextPt << endl;
+
+	if( !lookInRevDir )
+		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
+	else
+		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
+	
+	return nextPt;
+}
+
 //to check if found point is not neigbour to previous point(and previous point itself)
 //returns true if is not
 bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
@@ -378,6 +391,7 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 		SHOW(message);
 		aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
 		aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
+		//aImgRgbEdgeR.at<Vec3b>(Point(0,0)) = COLORS.yellow;
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;
 		//showResized(aSrcRgbImgR, "SrcRgbImg", 2.5, 0);
@@ -421,13 +435,14 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	Point diffPt = actPt - prevPt;
 
 	//why has to use prevPoint, why not actPoint??
-	prevPt = actPt;
+	//	prevPt = actPt;
+
 
   	//Czy pixel niby usredniony przez filtr jest czarny?:
 	if(aSrcRgbImgR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
 	{
 		pointsArray[0] = prevPt;
-		//aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
+		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
 		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.orange;
 		string message = "should be colored orange";
 		SHOW(message);
@@ -511,7 +526,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		string message = "!!!!!!!!!!!!Mean point is " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
 		SHOW(message);
 		//a.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
-		aSrcRgbImgR.at<Vec3b>(meanPt) = COLORS.pink;//to psuje obliczenia
+		aRgbEdgeMapR.at<Vec3b>(meanPt) = COLORS.pink;//to psuje obliczenia
 	}
 	else
 	{ 

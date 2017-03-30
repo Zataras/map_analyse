@@ -19,14 +19,15 @@ using namespace std;
 //BGR
 const colors COLORS = 
 {
-	Vec3b(255,0,0), 		//blue
-	Vec3b(0,255,0), 		//green
-	Vec3b(0,0,255), 		//red
-	Vec3b(0,0,0),			//black
+	//	  (  B,  G,  R)
+	Vec3b(255,  0,  0), 		//blue
+	Vec3b(  0,255,  0), 		//green
+	Vec3b(  0,  0,255), 		//red
+	Vec3b(  0,  0,  0),			//black
 	Vec3b(255,255,255),	//white
 	Vec3b(205,205,205),	//grey
-	Vec3b(255,255,0),		//yellow
-	Vec3b(255,153,0),		//orange
+	Vec3b(  0,255,255),		//yellow
+	Vec3b(  0,153,255),		//orange
 	Vec3b(255,153,255),	//pink
 	Vec3b(153,100,153)	//violet
 };
