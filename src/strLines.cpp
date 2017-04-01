@@ -331,7 +331,8 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 					break;
 				}
 				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
-				if( srcImg.at<Vec3b>(modPt) == wantedColor && modPt != prevPt )
+				//added black always to allow on rev to analize longer series
+				if( (srcImg.at<Vec3b>(modPt) == wantedColor || srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
 				{	
 					foundPt = modPt;
 					found = true;
@@ -535,7 +536,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		waitKey(0);
 	}
 	
-	float sumSqrXi = 0; // for counting standart deviation
+	float sumSqrXi = 0; // for counting standard deviation
 	
 	for(int  i = 0; i <= pointsArraySize - 1; i++)
 	{	
