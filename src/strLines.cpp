@@ -124,6 +124,10 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//----------------debug-------------------
 		cout << __LINE__ << ": New cycle" <<endl;
 		
+		//Add new empty element to VecOfMeanLines for edge which will be found next
+		vector<Vec2f> vecOfVec2f;
+		VecOfMeanLines.push_back(vecOfVec2f);
+		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		if(pt.x == -1)
@@ -521,6 +525,25 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	{
 		meanPt.x = meanSum.x / meanCounter;
 		meanPt.y = meanSum.y / meanCounter;
+		float meanPtx = (float) meanSum.x / meanCounter;
+		//cout << meanPtx<<",";
+		float meanPty = (float) meanSum.y / meanCounter;
+		//cout << meanPty<<"\n";
+		Vec2f meanPtL = Vec2f(meanPtx, meanPty);
+		//add last counted mean point to current egde's points vector
+		//SHOW(VecOfMeanLines.size());
+		VecOfMeanLines[VecOfMeanLines.size()-1].push_back(meanPtL);
+		
+		string message = "whole VecOfMeanLines data below:";
+		SHOW(message);
+		for(int i=0; i<VecOfMeanLines.size(); i++)
+		{
+			for(int j=0; j<VecOfMeanLines[i].size(); j++)
+			{
+				cout << "VecOfMeanLines["<<i<<"].";
+				cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
+			}
+		}
 	}
 	if(meanCounter) // > 1){
 	{

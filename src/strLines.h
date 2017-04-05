@@ -26,7 +26,7 @@
 #include <string> //to_string
 #include <ostream>//font colors
 
-#define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << endl;//nice function for debug
+#define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << "\n";//nice function for debug
 
 using namespace cv;
 using namespace std;
@@ -47,8 +47,9 @@ struct colors
 
 /// Global variables
 extern const colors COLORS;
+extern vector<vector<Vec2f>> VecOfMeanLines;
 
-extern Mat  detected_edges, detected_edges2, mapaRobocza, color_dst3;
+extern Mat mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
 extern double resizeFactor;
 extern Mat edgesRgbMap;

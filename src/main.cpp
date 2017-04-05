@@ -20,21 +20,25 @@ using namespace std;
 const colors COLORS = 
 {
 	//	  (  B,  G,  R)
-	Vec3b(255,  0,  0), 		//blue
-	Vec3b(  0,255,  0), 		//green
-	Vec3b(  0,  0,255), 		//red
-	Vec3b(  0,  0,  0),			//black
+	Vec3b(255,  0,  0), 	//blue
+	Vec3b(  0,255,  0), 	//green
+	Vec3b(  0,  0,255), 	//red
+	Vec3b(  0,  0,  0),	//black
 	Vec3b(255,255,255),	//white
 	Vec3b(205,205,205),	//grey
-	Vec3b(  0,255,255),		//yellow
-	Vec3b(  0,153,255),		//orange
+	Vec3b(  0,255,255),	//yellow
+	Vec3b(  0,153,255),	//orange
 	Vec3b(255,153,255),	//pink
 	Vec3b(153,100,153)	//violet
 };
 
+//this global variable consists of vector of mean values counted for each row in series
+//and can be used to visualize supposed position of obstacle's edge
+//VectorOfMeanLines: <line1, line2, line3> each line: vector of mean points:<floatX, floatY>
+vector<vector<Vec2f>> VecOfMeanLines;
+//int MeanLineIndex
 
-
-Mat detected_edges, detected_edges2, mapaRobocza, color_dst3;
+Mat mapaRobocza, color_dst3;
 Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
 
 double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
