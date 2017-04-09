@@ -94,7 +94,9 @@ void onMouse(int evt, int x, int y, int flags, void* param) {
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 {
 	for(int x = 0; x < Img.rows; x++){
+		SHOW(x);
 		for(int y = 0; y < Img.cols; y++){
+			SHOW(y);
 			//Vec3b pxColor = Img.at<Vec3b>(x, y);
 			if( Img.at<Vec3b>(x, y) == srcColor)
 				Img.at<Vec3b>(x, y) = dstColor;
@@ -112,7 +114,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	bool allAnalysed = false;
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
-	while(pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols) || allAnalysed)
+	while((pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols)) && !allAnalysed)
 	{	
 		//counting any line
 		linesCounter++;
@@ -130,8 +132,11 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
-		if(pt.x == -1)
+		SHOW(pt);
+		if(pt.x == -1){
 			allAnalysed = true;//doesnt work
+			SHOW(allAnalysed);
+		}
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
 		
@@ -156,6 +161,10 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			}
 			
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
+			/*if(nextPt.x == -1 && lineLength == 0)
+			{
+				
+			}*/
 			showResized(aAuxRgbMap, "debug window", resizeFactor, 0); //debug			
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
@@ -274,10 +283,10 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 {
 	bool stop = false;
-	Point pt = aPt;
+	Point pt = Point(-1, -1);//aPt;
 
-	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
-		while(pt.x < (aImgR.cols) && stop == false){
+	while((pt.x < (aImgR.rows) || pt.y < (aImgR.cols)) && stop == false){
+		while(pt.x < (aImgR.rows) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
 
 			if( pxColour == aColour)
@@ -289,7 +298,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( !stop )			
 				pt.x++;
 		}
-  		if( !stop && pt.y < (aImgR.rows) )
+  		if( !stop && pt.y < (aImgR.cols) )
   		{		
 			pt.x = 0;
 			pt.y++;
@@ -336,10 +345,13 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 				}
 				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				//added black always to allow on rev to analize longer series
-				if( (srcImg.at<Vec3b>(modPt) == wantedColor || srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
-				{	
-					foundPt = modPt;
-					found = true;
+				if(modPt.x < srcImg.rows && modPt.y < srcImg.cols)
+				{
+					if( (srcImg.at<Vec3b>(modPt) == wantedColor || srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
+					{	
+						foundPt = modPt;
+						found = true;
+					}
 				}
 				direction++;
 			}
@@ -465,7 +477,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			{
 				//check in both vertical directions
 				//cout <<"counterAll: " << ++counterAll << endl;
-				if( prevPt.y + i <= aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
+				if( prevPt.y + i < aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y + i;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
@@ -489,7 +501,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
-				if( prevPt.x + i <= aRgbEdgeMapR.rows ){
+				if( prevPt.x + i < aRgbEdgeMapR.rows ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
@@ -531,7 +543,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		//cout << meanPty<<"\n";
 		Vec2f meanPtL = Vec2f(meanPtx, meanPty);
 		//add last counted mean point to current egde's points vector
-		//SHOW(VecOfMeanLines.size());
+		SHOW(VecOfMeanLines.size());
 		VecOfMeanLines[VecOfMeanLines.size()-1].push_back(meanPtL);
 		
 		string message = "whole VecOfMeanLines data below:";
