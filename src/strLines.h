@@ -49,6 +49,8 @@ struct colors
 extern const colors COLORS;
 extern vector<vector<Vec2f>> VecOfMeanLines;
 
+extern string message;
+
 extern Mat mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
 extern double resizeFactor;

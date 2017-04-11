@@ -43,6 +43,7 @@ Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
 
 double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
 										//when working on different resolutions
+string message;
 
 int edgeThresh = 1;
 int lowThreshold = 210, blur_in = 4, blur_out;
@@ -109,7 +110,8 @@ int main( int argc, char* argv[] )
 	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
-	
+	//showResized(auxRgbMap, "auxRgbMap", resizeFactor, 0); //debug
+	//SHOW("after colorChangeAllRgb");
 	//for(int i=1; i<=1; i+=2)
 	//{
 		//expose edges
@@ -118,7 +120,8 @@ int main( int argc, char* argv[] )
 	
 	//SHOW("1");
 	
-	edgesRgbMap = auxRgbMap.clone();
+	//edgesRgbMap = auxRgbMap.clone();
+	auxRgbMap.copyTo(edgesRgbMap);
 	//SHOW("2");
 	medianBlur ( auxRgbMap, auxRgbMap, blur_out );
 	Mat greyMap;

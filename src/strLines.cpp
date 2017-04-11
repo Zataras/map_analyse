@@ -41,8 +41,7 @@ void showResized(const Mat &srcImg, const string& winname, double factor, int ti
 	Mat bigImg;
 	//INTER_NEAREST do not fuzz pixels
 	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
-	//string ty =  type2str( bigImg.type() );
-	//string message = "Matrix: " + ty + " " + to_string(bigImg.cols) + "x" + to_string(bigImg.rows);
+
 	//SHOW(message);
 	namedWindow(winname, WINDOW_AUTOSIZE);
 	imshow(winname, bigImg);
@@ -84,7 +83,7 @@ void onMouse(int evt, int x, int y, int flags, void* param) {
         edgesRgbMap.at<Vec3b>(Pt) = keptColor;
         showResized(edgesRgbMap, "debug window", resizeFactor, 1);
         
-        cout << "clicked on " << Pt << endl;
+        cout << "Clicked on " << Pt << " coloured " << keptColor << "\n";
     }
 }
 
@@ -93,13 +92,14 @@ void onMouse(int evt, int x, int y, int flags, void* param) {
 //third arg is colour of grey
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 {
-	for(int x = 0; x < Img.rows; x++){
-		SHOW(x);
-		for(int y = 0; y < Img.cols; y++){
-			SHOW(y);
+	for(int x = 0; x < Img.cols; x++){
+		//SHOW(x);
+		for(int y = 0; y < Img.rows; y++){
+			//SHOW(y);
 			//Vec3b pxColor = Img.at<Vec3b>(x, y);
-			if( Img.at<Vec3b>(x, y) == srcColor)
-				Img.at<Vec3b>(x, y) = dstColor;
+			if( Img.at<Vec3b>(y, x) == srcColor)//!!
+				Img.at<Vec3b>(y, x) = dstColor;	//!!
+			//showResized(Img, "Img", resizeFactor, 1);
 		}
 	}
 }
@@ -114,7 +114,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	bool allAnalysed = false;
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
-	while((pt.x  < (aSrcRgbImgR.rows) || pt.y < (aSrcRgbImgR.cols)) && !allAnalysed)
+	while((pt.x  < (aSrcRgbImgR.cols) || pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
 	{	
 		//counting any line
 		linesCounter++;
@@ -285,8 +285,8 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	bool stop = false;
 	Point pt = Point(-1, -1);//aPt;
 
-	while((pt.x < (aImgR.rows) || pt.y < (aImgR.cols)) && stop == false){
-		while(pt.x < (aImgR.rows) && stop == false){
+	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
+		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
 
 			if( pxColour == aColour)
@@ -298,7 +298,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( !stop )			
 				pt.x++;
 		}
-  		if( !stop && pt.y < (aImgR.cols) )
+  		if( !stop && pt.y < (aImgR.rows) )
   		{		
 			pt.x = 0;
 			pt.y++;
@@ -345,8 +345,10 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 				}
 				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				//added black always to allow on rev to analize longer series
-				if(modPt.x < srcImg.rows && modPt.y < srcImg.cols)
+				//SHOW(modPt);
+				if(modPt.x < srcImg.cols && modPt.y < srcImg.rows)
 				{
+					//SHOW(modPt);
 					if( (srcImg.at<Vec3b>(modPt) == wantedColor || srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
 					{	
 						foundPt = modPt;
@@ -371,7 +373,11 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
 	if( !lookInRevDir )
+	{
+		//message = "/*Prev to*/ ["+to_string(prevPt.x)+", "+to_string(prevPt.y)+"] coloured red";
+		//SHOW(prevPt);SHOW(actPt);SHOW(nextPt);
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
+	}
 	else
 		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
 	
@@ -477,7 +483,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			{
 				//check in both vertical directions
 				//cout <<"counterAll: " << ++counterAll << endl;
-				if( prevPt.y + i < aRgbEdgeMapR.cols ){ // if not exceeds maps size - cols px
+				if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
 					PrevPtMod.x = prevPt.x;
 					PrevPtMod.y = prevPt.y + i;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
@@ -501,7 +507,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
-				if( prevPt.x + i < aRgbEdgeMapR.rows ){
+				if( prevPt.x + i < aRgbEdgeMapR.cols ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
 					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
