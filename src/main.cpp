@@ -141,10 +141,10 @@ int main( int argc, char* argv[] )
 	setMouseCallback("debug window", onMouse, NULL);
 	
 	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
-	
+	SHOW(" ");
 	//here has to put comparing function with at least two Mat arguments
 	
-	callFunctions(auxRgbMap, width, minLenght);
+	//callFunctions(auxRgbMap, width, minLenght);
 	
 	//cvtColor(src, rgbImg, CV_GRAY2RGB);
 	
@@ -157,7 +157,7 @@ int main( int argc, char* argv[] )
 	/// Wait until user exit program by pressing a key
   	//waitKey(0);
 	
-	destroyAllWindows();
+	//destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
   	return 0;
 }
 

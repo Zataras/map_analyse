@@ -128,8 +128,9 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		
 		//Add new empty element to VecOfMeanLines for edge which will be found next
 		vector<Vec2f> vecOfVec2f;
+		SHOW(" ");
 		VecOfMeanLines.push_back(vecOfVec2f);
-		
+		SHOW(" ");		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		SHOW(pt);
@@ -165,7 +166,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			{
 				
 			}*/
-			showResized(aAuxRgbMap, "debug window", resizeFactor, 0); //debug			
+			showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -276,19 +277,32 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 		}
 	}
-		
+	message = "Out of while loop";
+	SHOW(message);	
 }
+
+/*PROBLEM!:
+135: pt = [83, 73]
+263: nextPt.x = -1
+127: New cycle
+135: pt = [86, 73]
+263: nextPt.x = -1
+127: New cycle
+135: pt = [89, 73]
+263: nextPt.x = -1
+*** Error in `./launcher': free(): invalid next size (normal): 0x0000000001093020 ****/
+
 
 //idea for variable naming convention: [Argument/Local/Static][name][Reference, Pointer]
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 {
 	bool stop = false;
-	Point pt = Point(-1, -1);//aPt;
-
+	Point pt = aPt;
+	
 	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
 		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
-
+			SHOW(pt);
 			if( pxColour == aColour)
 			{
 				stop = true;
@@ -298,13 +312,18 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( !stop )			
 				pt.x++;
 		}
-  		if( !stop && pt.y < (aImgR.rows) )
+  		if( !stop && ((pt.y ) < (aImgR.rows)) )
   		{		
 			pt.x = 0;
 			pt.y++;
 		}
 	}
-	return pt;
+	//305: pt = [88, 72] Matrix: 8UC3 89x73
+	// if not found return -1,-1
+	if(!stop)
+		return Point(-1,-1);
+	else
+		return pt;
 }
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
@@ -574,7 +593,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	{ 
 		string message = "Couldn't count mean at: " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
 		SHOW(message);
-		waitKey(0);
+		//waitKey(0); //!!
 	}
 	
 	float sumSqrXi = 0; // for counting standard deviation
@@ -616,7 +635,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug
+	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!!
   
   return s;
 	
@@ -651,138 +670,52 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 	return direction;
 }
 
-//Poprawic sposob obliczania dokladnosci!!!!
-//dokladnosc to odchylenie danego pomiaru od spodziewanej wartosci referencyjnej
-//czyli moze dla kazdego pixela osobno nalezy wyznaczyc dokladnosc?
+/*305: pt = [87, 73]
+305: pt = [88, 73]
+136: pt = [88, 73]
+264: nextPt.x = -1
+127: New cycle
+131: " " =  
+133: " " =  
+305: pt = [88, 73]
+136: pt = [-1, -1]
+139: allAnalysed = 1
+281: message = Out of while loop
+144: " " =  
+==7511== Invalid free() / delete / delete[] / realloc()
+==7511==    at 0x4C29E90: free (vg_replace_malloc.c:473)
+==7511==    by 0x9325E04: free_mem (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==7511==    by 0x9326141: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==7511==    by 0x4A236CC: _vgnU_freeres (vg_preloaded.c:63)
+==7511==    by 0x9211AEA: __run_exit_handlers (exit.c:97)
+==7511==    by 0x9211B74: exit (exit.c:104)
+==7511==    by 0x91FBB4B: (below main) (libc-start.c:321)
+==7511==  Address 0xff000009345a40 is not stack'd, malloc'd or (recently) free'd
+==7511== 
+==7511== Invalid free() / delete / delete[] / realloc()
+==7511==    at 0x4C29E90: free (vg_replace_malloc.c:473)
+==7511==    by 0x9325E0D: free_mem (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==7511==    by 0x9326141: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
+==7511==    by 0x4A236CC: _vgnU_freeres (vg_preloaded.c:63)
+==7511==    by 0x9211AEA: __run_exit_handlers (exit.c:97)
+==7511==    by 0x9211B74: exit (exit.c:104)
+==7511==    by 0x91FBB4B: (below main) (libc-start.c:321)
+==7511==  Address 0xff00000014cd1990 is not stack'd, malloc'd or (recently) free'd
+==7511== 
+==7511== 
+==7511== HEAP SUMMARY:
+==7511==     in use at exit: 2,683,369 bytes in 7,616 blocks
+==7511==   total heap usage: 66,465 allocs, 58,851 frees, 878,648,203 bytes allocated
+==7511== 
+==7511== LEAK SUMMARY:
+==7511==    definitely lost: 6 bytes in 1 blocks
+==7511==    indirectly lost: 0 bytes in 0 blocks
+==7511==      possibly lost: 1,969,265 bytes in 323 blocks
+==7511==    still reachable: 635,162 bytes in 6,872 blocks
+==7511==         suppressed: 0 bytes in 0 blocks
+==7511== Rerun with --leak-check=full to see details of leaked memory
+==7511== 
+==7511== For counts of detected and suppressed errors, rerun with: -v
+==7511== Use --track-origins=yes to see where uninitialised values come from
+==7511== ERROR SUMMARY: 570 errors from 7 contexts (suppressed: 0 from 0)*/
 
-//returns standard deviation of measurements with laser scanner
-//okresla ile pixeli w najblizszym otoczeniu linii nie nalezy do linii
-//okreslic jako linie tylko dlugie proste i tylko je analizowac
-//wyszlo probnie ze odchylenie st. = 0.0878308 
-/*
-
-		//while there is still any not analysed pixel
-		while( nextPoint.x != -1 )
-		{
-			
-			//if( lookInRevDir )
-			//	dirChangeLimit = 5; 
-			//pt = nextPoint;
-			
-			//find next "obstacle" pixel in current series
-			nextPoint = findNextPixelEdge(edgeImg, prevPoint, actPoint, lookInRevDir);
-
-			//if previous, actual and next points difference points that they
-			// may be lying on straight line then take this point into consideration in 
-			// counting accuracy
-			//cout << "Pts are: " << prevPoint << actPoint << nextPoint << endl;
-			
-			//check current direction of last 3 pixels
-			if( !lookInRevDir )
-				direction = checkDirection( prevPoint, actPoint, nextPoint );
-			
-			//cout << "Direction is: " << direction << endl;
-			//cout << ". Act point is: " << actPoint << endl;
-			// dodac kontrole calkowitej zmiany wspolrzednej
-			
-			//count whole coordinate change if direction is opposite to currently analysed
-			//to check if limit is not exceeded
-			if( !lookInRevDir )
-			{
-				diffPt = actPoint - prevPoint;
-				if( currDir == 1)
-					diffSum += diffPt.y;
-				if( currDir == 2)
-					diffSum += diffPt.x;
-			}
-
-			//save first considered currently direction as refernece
-			if( currDir == -1 && direction != 0 )
-				currDir = direction;
-
-			//if current direction is not equal to currenly analysed, increase counter value
-			//if is reset value
-			if( direction != currDir )
-				dirChangeCount++;
-			else
-				dirChangeCount = 0;
-			
-			//if sum of direction changes or whole coordinate change limit is exceed 
-			//then check if line has reched minimum length
-			//is yes it will be further analysed
-			//if not set -1 and this series will be ommited
-			if ( dirChangeCount > dirChangeLimit || diffSum > diffSumLimit )
-			{
-				//currDir = -1;
-				diffSum = 0;
-				if( minLineLenReached )
-				{
-					lookInRevDir = true;
-					dirChangeCount = -1;
-					reachedLen = lineLength;
-					//cout << "Direction changed and min len reached = " << lineLength << endl;
-					lineLength = 0;
-				}
-				else
-				{
-					//lineLength = 0;
-					nextPoint.x = -1;
-				}
-			}
-			
-			//If going backwards measured forward length is reched then finish analying this series.
-			//Maybe it's bad idea? maybe should follow until doesn't fit previous condiditons
-			//like sum of direction changes or whole coordinate change limit is exceed 
-			if( lookInRevDir && (lineLength >= (reachedLen - 2)) )
-			{
-				nextPoint.x = -1;
-				ileDlugich++;
-			}
-
-			//set true if reached
-			if( lineLength > lineLenghtMin )
-				minLineLenReached = true;
-			
-			//update points values
-			if( !lookInRevDir || lineLength != 0 )
-			{
-				prevPoint = actPoint;
-				actPoint = nextPoint;
-			}
-			else 
-			{
-				if( lineLength == 0 )
-				{
-					Point tempPt = nextPoint;			
-					nextPoint = prevPoint; 
-					prevPoint = tempPt;
-				}			
-			}
-			
-			if( lookInRevDir ) //if accepted to analyse
-			{
-				dokladnosc = countTrueMean(pixImg, prevPoint, actPoint, otoczenie, currDir);
-				if( dokladnosc >= 0 ){
-					sum2 = sum2 + dokladnosc;
-					sum = sum + dokladnosc;
-					ile++;
-					ile2++;
-				}
-				//cout << "licze dokladnosc" << endl;
-			}
-
-			lineLength++;
-		}
-		cout << "---BREAK--- length:" << lineLength << endl;
-
-		if (lineLength > longest)
-			longest = lineLength;
-
-	}
-	imshow( "linie", color_dst3 );
-	cout << "Najdluzszych linii jest = " << ileDlugich << endl;
-	dokladnosc = sum / ile;
-	cout << "linesCounter = " << linesCounter << endl;
-	cout << "Odchylenie standardowe = " << dokladnosc << " px" << endl;
-	return 0;
-*/
