@@ -128,12 +128,12 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		
 		//Add new empty element to VecOfMeanLines for edge which will be found next
 		vector<Vec2f> vecOfVec2f;
-		SHOW(" ");
+		//SHOW(" ");
 		VecOfMeanLines.push_back(vecOfVec2f);
-		SHOW(" ");		
+		//SHOW(" ");		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
-		SHOW(pt);
+		//SHOW(pt);
 		if(pt.x == -1){
 			allAnalysed = true;//doesnt work
 			SHOW(allAnalysed);
@@ -166,7 +166,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			{
 				
 			}*/
-			showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
+			//showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -302,7 +302,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
 		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
-			SHOW(pt);
+			//SHOW(pt);
 			if( pxColour == aColour)
 			{
 				stop = true;

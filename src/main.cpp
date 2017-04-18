@@ -61,6 +61,30 @@ void CannyThreshold(int, void*);
 
 //void coutLine(int line)
 
+/*
+vector<vector<int> > vvi;
+vector<vector<int> >::iterator vvi_iterator;
+vector<int>::iterator vi_iterator;
+
+for(vvi_terator = vvi.begin();vvi_iterator!=vvi.end();++vvi_iterator) {
+    for(vi_iterator = (*vvi_iterator).begin();vi_iterator!=(*vvi_iterator).end();++vi _iterator) {
+     cout<<*vi_iterator<<" ";
+    }  
+}
+*/
+
+typedef vector<vector<Vec2f>> DataT;
+void countAndDrawMeanLines(Mat &aRsrcRgbImg){
+	for( DataT::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
+	{
+	 	for( vector<Vec2f>::iterator j = *i.begin(); j != *i.end(); j++ )
+		{
+		 	Vec2f temp = *j;
+		 	SHOW(temp);
+		}
+	}
+}
+
 void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 {
 	
@@ -141,7 +165,8 @@ int main( int argc, char* argv[] )
 	setMouseCallback("debug window", onMouse, NULL);
 	
 	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
-	SHOW(" ");
+	
+	countAndDrawMeanLines(srcRgbImg);
 	//here has to put comparing function with at least two Mat arguments
 	
 	//callFunctions(auxRgbMap, width, minLenght);
