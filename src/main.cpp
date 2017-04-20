@@ -61,28 +61,31 @@ void CannyThreshold(int, void*);
 
 //void coutLine(int line)
 
-/*
-vector<vector<int> > vvi;
-vector<vector<int> >::iterator vvi_iterator;
-vector<int>::iterator vi_iterator;
-
-for(vvi_terator = vvi.begin();vvi_iterator!=vvi.end();++vvi_iterator) {
-    for(vi_iterator = (*vvi_iterator).begin();vi_iterator!=(*vvi_iterator).end();++vi _iterator) {
-     cout<<*vi_iterator<<" ";
-    }  
-}
-*/
-
-typedef vector<vector<Vec2f>> DataT;
-void countAndDrawMeanLines(Mat &aRsrcRgbImg){
-	for( DataT::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
+//typedef vector<vector<Vec2f>> DataT;
+void countAndDrawMeanLines(Mat &aRsrcRgbImg)
+{
+	vector vecOfMeanVals;
+	
+	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
-	 	for( vector<Vec2f>::iterator j = *i.begin(); j != *i.end(); j++ )
+		Vec2f sum = Vec2f(0,0);
+		for(int j=0; j<VecOfMeanLines[i].size(); j++)
+		{
+			cout << "VecOfMeanLines["<<i<<"].";
+			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
+			sum += VecOfMeanLines[i][j];
+		}
+		mean = sum / j;
+	}
+	
+	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
+	{
+	 	for( vector<Vec2f>::iterator j = (*i).begin(); j != (*i).end(); j++ )
 		{
 		 	Vec2f temp = *j;
 		 	SHOW(temp);
 		}
-	}
+	}*/
 }
 
 void callFunctions(Mat &aRgbMapR, int width, int minLenght)
