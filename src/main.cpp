@@ -64,12 +64,13 @@ void CannyThreshold(int, void*);
 //typedef vector<vector<Vec2f>> DataT;
 void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
-	vector vecOfMeanVals;
-	
+	vector<Vec2f> vecOfMeanVals;
+	Vec2f mean;
 	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
-		for(int j=0; j<VecOfMeanLines[i].size(); j++)
+		int j;
+		for(j=0; j<VecOfMeanLines[i].size(); j++)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
 			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
