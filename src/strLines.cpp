@@ -112,6 +112,8 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
 	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
 	bool allAnalysed = false;
+	vector<Vec2f> vecOfVec2f;
+	VecOfMeanLines.push_back(vecOfVec2f);
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
 	while((pt.x  < (aSrcRgbImgR.cols) || pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
@@ -127,9 +129,9 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		cout << __LINE__ << ": New cycle" <<endl;
 		
 		//Add new empty element to VecOfMeanLines for edge which will be found next
-		vector<Vec2f> vecOfVec2f;
+		
 		//SHOW(" ");
-		VecOfMeanLines.push_back(vecOfVec2f);//problem - adding also when line not accepted
+		//VecOfMeanLines.push_back(vecOfVec2f);//problem - adding also when line not accepted
 		//SHOW(" ");		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
@@ -140,6 +142,9 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		}
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
+		
+		if(*(VecOfMeanLines.end()) != vecOfVec2f)
+			VecOfMeanLines.push_back(vecOfVec2f);
 		
 		//===while there is still any not analysed pixel in current series===
 		while( nextPt.x != -1 )
@@ -200,6 +205,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			{
 				minLineLenReached = true;
 				cout << __LINE__ << ": Line accepted" << endl;
+				
 			}		
 			
 			//if sum of direction changes or whole coordinate change limit is exceed 
@@ -218,6 +224,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					SHOW("Direction changed and min len reached");
 					SHOW(lineLength);
 					lineLength = 0;
+					
 				}
 				else
 				{
@@ -229,6 +236,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			if( lookInRevDir ) //if accepted to analyse
 			{
+				
 				int otoczenie = 5;
 				float dokladnosc = countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
 				//if( dokladnosc >= 0 ){

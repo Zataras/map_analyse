@@ -71,27 +71,31 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
 	vector<Vec2f> vecOfMeanVals;
 	Vec2f mean;
+	//SHOW(VecOfMeanLines.size());
 	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
-		int j;
-		for(j=0; j<VecOfMeanLines[i].size(); j++)
+		//int j;
+		for(int j=0; j<VecOfMeanLines[i].size(); j++)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
 			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
-			sum += VecOfMeanLines[i][j]; //can divide here?
-			sum /= 2;
-			
+			if(VecOfMeanLines[i][j] != Vec2f(0,0))
+			{
+				sum += VecOfMeanLines[i][j]; //can divide here?
+				sum /= 2;
+			}
 		}
 		//mean = sum / j;
+		//SHOW(vecOfMeanVals.size());
 		vecOfMeanVals.push_back(sum);
 	}
-	
+	//vecOfMeanVals.shrink_to_fit();
 	for(int j=0; j<vecOfMeanVals.size(); j++)
-		{
-			cout << "vecOfMeanVals["<<j<<"]";
-			cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
-		}
+	{
+		cout << "vecOfMeanVals["<<j<<"]";
+		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
+	}
 	
 	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
 	{
