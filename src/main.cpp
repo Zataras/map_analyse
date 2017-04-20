@@ -62,6 +62,11 @@ void CannyThreshold(int, void*);
 //void coutLine(int line)
 
 //typedef vector<vector<Vec2f>> DataT;
+
+/*
+1) Count mean for each line (first index)
+(2)) Draw line representing mean value for each line - has to refer to proper coordinate: x OR y (for debug)
+*/
 void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
 	vector<Vec2f> vecOfMeanVals;
@@ -74,10 +79,19 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
 			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
-			sum += VecOfMeanLines[i][j];
+			sum += VecOfMeanLines[i][j]; //can divide here?
+			sum /= 2;
+			
 		}
-		mean = sum / j;
+		//mean = sum / j;
+		vecOfMeanVals.push_back(sum);
 	}
+	
+	for(int j=0; j<vecOfMeanVals.size(); j++)
+		{
+			cout << "vecOfMeanVals["<<j<<"]";
+			cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
+		}
 	
 	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
 	{
