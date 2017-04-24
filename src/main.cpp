@@ -35,7 +35,8 @@ const colors COLORS =
 //this global variable consists of vector of mean values counted for each row in series
 //and can be used to visualize supposed position of obstacle's edge
 //VectorOfMeanLines: <line1, line2, line3> each line: vector of mean points:<floatX, floatY>
-vector<vector<Vec2f>> VecOfMeanLines;
+
+vector<structVecOfMeanLines> VecOfMeanLines;
 //int MeanLineIndex
 
 Mat mapaRobocza, color_dst3;
@@ -76,13 +77,13 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	{
 		Vec2f sum = Vec2f(0,0);
 		//int j;
-		for(int j=0; j<VecOfMeanLines[i].size(); j++)
+		for(int j=0; j<VecOfMeanLines[i].meanPt.size(); j++)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
-			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
-			if(VecOfMeanLines[i][j] != Vec2f(0,0))
+			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<")\n";
+			if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
 			{
-				sum += VecOfMeanLines[i][j]; //can divide here?
+				sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
 				sum /= 2;
 			}
 		}

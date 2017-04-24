@@ -45,9 +45,19 @@ struct colors
 	Vec3b violet;
 };
 
+struct structVecOfMeanLines
+{
+	vector<Vec2f> meanPt;
+	int direction;
+	bool operator!= (const structVecOfMeanLines s1)
+	{
+		return 1;
+	}
+};
+
 /// Global variables
 extern const colors COLORS;
-extern vector<vector<Vec2f>> VecOfMeanLines;
+extern vector<structVecOfMeanLines> VecOfMeanLines;
 
 extern string message;
 
