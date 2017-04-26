@@ -51,12 +51,18 @@ struct structVecOfMeanLines
 	int direction;
 	bool operator!= (const structVecOfMeanLines s1)
 	{
-		return 1;
+		if(meanPt == s1.meanPt && direction == s1.direction)
+			return 0;
+		else
+			return 1;
 	}
+	
 };
 
 /// Global variables
 extern const colors COLORS;
+
+//it should contain points coordinates sorted by lines and containing information about direction
 extern vector<structVecOfMeanLines> VecOfMeanLines;
 
 extern string message;

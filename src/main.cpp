@@ -76,7 +76,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
-		//int j;
+		int counter = 0;
 		for(int j=0; j<VecOfMeanLines[i].meanPt.size(); j++)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
@@ -84,11 +84,13 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
 			{
 				sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
-				sum /= 2;
+				counter++;
 			}
+		
 		}
 		//mean = sum / j;
 		//SHOW(vecOfMeanVals.size());
+		sum = sum / counter;
 		vecOfMeanVals.push_back(sum);
 	}
 	//vecOfMeanVals.shrink_to_fit();
@@ -96,6 +98,59 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	{
 		cout << "vecOfMeanVals["<<j<<"]";
 		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
+	}
+	//draw mean lines
+	//Img.at<Vec3b>(y, x) = dstColor;
+	for(int i=0; i<VecOfMeanLines.size(); i++)
+	{
+		if(!VecOfMeanLines[i].meanPt.empty())
+		{
+			Point ptToDraw(-1,-1);
+			SHOW("");
+			Vec2f vBegin = *(VecOfMeanLines[i].meanPt.begin()), vEnd = *(VecOfMeanLines[i].meanPt.rbegin()); 
+			SHOW("");
+			SHOW(vBegin);
+			SHOW(vEnd);
+			int jBegin, jEnd;
+			if(VecOfMeanLines[i].direction == 1)
+			{
+				jBegin = vBegin[0];
+				jEnd 	 = vEnd[0];				
+			}
+			if(VecOfMeanLines[i].direction == 2)
+			{
+				jBegin = vBegin[1];
+				jEnd = 	vEnd[1];
+			}
+			//check if end greater than begin
+			if(jBegin > jEnd)
+			{
+				int jTemp = jBegin;
+				jBegin = jEnd;
+				jEnd 	 = jTemp;
+			}
+			for(int j=jBegin; j<=jEnd; j++)
+			{
+				//check directions
+				if(VecOfMeanLines[i].direction == 1)
+				{	
+					ptToDraw.x = j;
+					ptToDraw.y = vecOfMeanVals[i][1];
+				}	
+				else if(VecOfMeanLines[i].direction == 2)
+				{
+					ptToDraw.x = vecOfMeanVals[i][0];
+					ptToDraw.y = j;
+				}
+				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
+				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 0); //debug
+				//cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<")\n";
+				/*if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
+				{
+					sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
+				}*/
+			}
+		}
 	}
 	
 	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )

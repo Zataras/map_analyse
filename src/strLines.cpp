@@ -113,6 +113,9 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
 	bool allAnalysed = false;
 	structVecOfMeanLines vecOfVec2f;
+	vecOfVec2f.direction = -1;
+	//SHOW(vecOfVec2f.direction);
+	//waitKey(0);
 	VecOfMeanLines.push_back(vecOfVec2f);
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
@@ -575,13 +578,13 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		float meanPty = (float) meanSum.y / meanCounter;
 		//cout << meanPty<<"\n";
 		//Vec2f meanPtL = Vec2f(meanPtx, meanPty);
-		structVecOfMeanLines strOML;
-		strOML.meanPt = Vec2f(meanPtx, meanPty); //!!
-		strOML.direction = currDir;
+		//structVecOfMeanLines strOML;
+		//strOML.meanPt.push_back(Vec2f(meanPtx, meanPty)); //!!
+		//strOML.direction = currDir;
 		//add last counted mean point to current egde's points vector
 		SHOW(VecOfMeanLines.size());
-		VecOfMeanLines[VecOfMeanLines.size()-1].push_back(strOML);
-		
+		VecOfMeanLines[VecOfMeanLines.size()-1].meanPt.push_back(Vec2f(meanPtx, meanPty));
+		VecOfMeanLines[VecOfMeanLines.size()-1].direction = currDir;
 		/*string message = "whole VecOfMeanLines data below:";
 		SHOW(message);
 		for(int i=0; i<VecOfMeanLines.size(); i++)
