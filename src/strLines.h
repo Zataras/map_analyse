@@ -13,6 +13,16 @@
   	wszystko oprócz bloków funkcji. 
 */
 
+	/*====SCIĄGA MAT SIZE====:
+	cv:Mat mat;
+	int rows = mat.rows;
+	int cols = mat.cols;
+
+	cv::Size s = mat.size();
+	rows = s.height;
+	cols = s.width;
+	*/
+
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 //#include "opencv2/imgcodecs/imgcodecs.hpp"

@@ -59,10 +59,6 @@ int ANALYSED_PX = 0;
 
 void CannyThreshold(int, void*);
 
-//void coutLine(int line)
-
-//typedef vector<vector<Vec2f>> DataT;
-
 /*
 1) Count mean for each line (first index)
 (2)) Draw line representing mean value for each line - has to refer to proper coordinate: x OR y (for debug)
@@ -71,7 +67,6 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
 	vector<Vec2f> vecOfMeanVals;
 	Vec2f mean;
-	//SHOW(VecOfMeanLines.size());
 	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
@@ -87,8 +82,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			}
 		
 		}
-		//mean = sum / j;
-		//SHOW(vecOfMeanVals.size());
+
 		if(counter)
 		{
 			sum = sum / counter;
@@ -102,7 +96,6 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
 	}
 	//draw mean lines
-	//Img.at<Vec3b>(y, x) = dstColor;
 	for(int i=0; i<VecOfMeanLines.size(); i++)
 	{
 		if(!VecOfMeanLines[i].meanPt.empty())
@@ -147,14 +140,12 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
 				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 1); //debug
-				//cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<")\n";
-				/*if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
-				{
-					sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
-				}*/
 			}
 		}
 	}
+	//!! TODO:
+	//Zmodyfikowac juz istniejace funkcje badajace otoczenie linii, tak zeby mozna je  bylo
+	//ponownie wykonac wzdluz wyznaczonej sredniej linii i policzyc odchylenie pixeli
 	
 	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
 	{

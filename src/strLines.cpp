@@ -444,10 +444,6 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 		//SHOW(message);
 		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
 		//aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
-		//aImgRgbEdgeR.at<Vec3b>(Point(0,0)) = COLORS.yellow;
-		//if(currWidth > maxWidth)
-			//maxWidth = currWidth;
-		//showResized(aSrcRgbImgR, "SrcRgbImg", 2.5, 0);
 		return PrevPtMod;
 	}
 	else 
@@ -457,7 +453,7 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 	
 }
 
-float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt, int &width, int currDir)
+float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt/*NU*/, int &width, int currDir)
 {
 	int counterAll = 0, counterAllEdge = 0, counterAllOut = 0;
 	int counterFound = 0, counterFoundEdge = 0, counterFoundOut = 0;
@@ -474,23 +470,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	Point PrevPtMod;
 	
 	int maxWidth = width; //0; //set new width to reduce counting
-
-	/*====SCIĄGA MAT SIZE====:
-	cv:Mat mat;
-	int rows = mat.rows;
-	int cols = mat.cols;
-
-	cv::Size s = mat.size();
-	rows = s.height;
-	cols = s.width;
-	*/
 	
-	Point diffPt = actPt - prevPt;
-
-	//why has to use prevPoint, why not actPoint??
-	//	prevPt = actPt;
-
-
   	//Czy pixel niby usredniony przez filtr jest czarny?:
 	if(aSrcRgbImgR.at<Vec3b>(prevPt.x, prevPt.y) == COLORS.black)
 	{
@@ -502,38 +482,32 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		++counterAllOut;
 	}
 	
-	//{
-	
- 	//cout <<"diffPt = " << diffPt << endl;
 	if(currDir == 1)//( diffPt.x != 0 )
 	{
-		//if( diffPt.y == 0 )//then look in vertical direction
-		//{
-			for( int i = 1; i<=width; i++ )
-			{
-				//check in both vertical directions
-				//cout <<"counterAll: " << ++counterAll << endl;
-				if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
-					PrevPtMod.x = prevPt.x;
-					PrevPtMod.y = prevPt.y + i;
-					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
-					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
-				}
-				
-				if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
-					PrevPtMod.x = prevPt.x;
-					PrevPtMod.y = prevPt.y - i;
-					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
-					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
-				}
+		for( int i = 1; i<=width; i++ )
+		{
+			//check in both vertical directions
+			//cout <<"counterAll: " << ++counterAll << endl;
+			if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
+				PrevPtMod.x = prevPt.x;
+				PrevPtMod.y = prevPt.y + i;
+				cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 			}
+			
+			if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
+				PrevPtMod.x = prevPt.x;
+				PrevPtMod.y = prevPt.y - i;
+				cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
+				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+			}
+		}
 		//}
 	}
-	if(currDir == 2)//( diffPt.y != 0 )
+	if(currDir == 2)
 	{
-		//if( diffPt.x == 0 ){//then look in vertical direction
 			for(int i = 1; i<=width; i++){
 				//check in both horizontal directions
 				//cout <<"counterAll: " << ++counterAllOut << endl;
