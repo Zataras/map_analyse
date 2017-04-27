@@ -146,7 +146,7 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
 		
-		if(*(VecOfMeanLines.end()) != vecOfVec2f)
+		if(*(VecOfMeanLines.rbegin()) != vecOfVec2f)
 			VecOfMeanLines.push_back(vecOfVec2f);
 		
 		//===while there is still any not analysed pixel in current series===
@@ -440,10 +440,10 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 	if(aSrcRgbImgR.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
 
-		string message = "Coloured yellow";
-		SHOW(message);
-		aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
-		aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
+		//string message = "Coloured yellow";
+		//SHOW(message);
+		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
+		//aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
 		//aImgRgbEdgeR.at<Vec3b>(Point(0,0)) = COLORS.yellow;
 		//if(currWidth > maxWidth)
 			//maxWidth = currWidth;

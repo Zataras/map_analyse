@@ -39,7 +39,6 @@ const colors COLORS =
 vector<structVecOfMeanLines> VecOfMeanLines;
 //int MeanLineIndex
 
-Mat mapaRobocza, color_dst3;
 Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
 
 double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
@@ -80,7 +79,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		for(int j=0; j<VecOfMeanLines[i].meanPt.size(); j++)
 		{
 			cout << "VecOfMeanLines["<<i<<"].";
-			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<")\n";
+			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<"); dir = "<<VecOfMeanLines[i].direction<< "\n";
 			if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
 			{
 				sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
@@ -90,8 +89,11 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		}
 		//mean = sum / j;
 		//SHOW(vecOfMeanVals.size());
-		sum = sum / counter;
-		vecOfMeanVals.push_back(sum);
+		if(counter)
+		{
+			sum = sum / counter;
+			vecOfMeanVals.push_back(sum);
+		}
 	}
 	//vecOfMeanVals.shrink_to_fit();
 	for(int j=0; j<vecOfMeanVals.size(); j++)
@@ -129,21 +131,22 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				jBegin = jEnd;
 				jEnd 	 = jTemp;
 			}
+			SHOW(i);
 			for(int j=jBegin; j<=jEnd; j++)
 			{
 				//check directions
 				if(VecOfMeanLines[i].direction == 1)
 				{	
 					ptToDraw.x = j;
-					ptToDraw.y = vecOfMeanVals[i][1];
+					ptToDraw.y = vecOfMeanVals[i][1]; //SHOW(ptToDraw.y);
 				}	
 				else if(VecOfMeanLines[i].direction == 2)
 				{
-					ptToDraw.x = vecOfMeanVals[i][0];
+					ptToDraw.x = vecOfMeanVals[i][0]; //SHOW(ptToDraw.x);
 					ptToDraw.y = j;
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 0); //debug
+				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 1); //debug
 				//cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<")\n";
 				/*if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
 				{
@@ -245,6 +248,8 @@ int main( int argc, char* argv[] )
 	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	countAndDrawMeanLines(srcRgbImg);
+	message = "at the end";
+	SHOW(message);
 	//here has to put comparing function with at least two Mat arguments
 	
 	//callFunctions(auxRgbMap, width, minLenght);
@@ -260,7 +265,7 @@ int main( int argc, char* argv[] )
 	/// Wait until user exit program by pressing a key
   	//waitKey(0);
 	
-	//destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
+	destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
   	return 0;
 }
 
