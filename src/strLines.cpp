@@ -7,7 +7,7 @@
 #include "strLines.h"
 
 //usage e.g. cout << Color::FG_RED << "text";
-namespace Color {
+namespace ColorFonts {
     enum Code {
         FG_RED      		= 31,
         FG_GREEN    		= 32,
@@ -34,41 +34,6 @@ namespace Color {
     std::ostream& operator<<(std::ostream& os, Code code) {
         return os << "\033[" << static_cast<int>(code) << "m";
     }
-}
-
-void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs)
-{
-	Mat bigImg;
-	//INTER_NEAREST do not fuzz pixels
-	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
-
-	//SHOW(message);
-	namedWindow(winname, WINDOW_AUTOSIZE);
-	imshow(winname, bigImg);
-	waitKey(timeMs);
-}
-
-string type2str(int type) {
-  string r;
-
-  uchar depth = type & CV_MAT_DEPTH_MASK;
-  uchar chans = 1 + (type >> CV_CN_SHIFT);
-
-  switch ( depth ) {
-    case CV_8U:  r = "8U"; break;
-    case CV_8S:  r = "8S"; break;
-    case CV_16U: r = "16U"; break;
-    case CV_16S: r = "16S"; break;
-    case CV_32S: r = "32S"; break;
-    case CV_32F: r = "32F"; break;
-    case CV_64F: r = "64F"; break;
-    default:     r = "User"; break;
-  }
-
-  r += "C";
-  r += (chans+'0');
-
-  return r;
 }
 
 void onMouse(int evt, int x, int y, int flags, void* param) {
@@ -431,8 +396,8 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 {
 	//static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
 	SHOW(PrevPtMod);
-	cout << Color::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
-	cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << Color::FG_DEFAULT << endl;
+	cout << ColorFonts::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
+	cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << ColorFonts::FG_DEFAULT << endl;
 	
 	++counterAllOut;
 	//waitKey(0);
@@ -452,6 +417,8 @@ Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray
 	
 	
 }
+
+
 
 float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt/*NU*/, int &width, int currDir)
 {
@@ -491,7 +458,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y + i;
-				cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 			}
@@ -499,7 +466,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y - i;
-				cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 			}
@@ -514,14 +481,14 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 				if( prevPt.x + i < aRgbEdgeMapR.cols ){
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
-					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+					cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}
 				if( prevPt.x - i >= 0 ){
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
-					cout << Color::FG_DARK_GRAY; SHOW(""); cout << Color::FG_DEFAULT;
+					cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 				}

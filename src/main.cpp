@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
-#include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>): 
+#include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
+//#include "usefulFun.h"
 #include "strLines.h"
 //#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
@@ -16,22 +17,6 @@ using namespace std;
  
 /// Global variables
 
-//BGR
-const colors COLORS = 
-{
-	//	  (  B,  G,  R)
-	Vec3b(255,  0,  0), 	//blue
-	Vec3b(  0,255,  0), 	//green
-	Vec3b(  0,  0,255), 	//red
-	Vec3b(  0,  0,  0),	//black
-	Vec3b(255,255,255),	//white
-	Vec3b(205,205,205),	//grey
-	Vec3b(  0,255,255),	//yellow
-	Vec3b(  0,153,255),	//orange
-	Vec3b(255,153,255),	//pink
-	Vec3b(153,100,153)	//violet
-};
-
 //this global variable consists of vector of mean values counted for each row in series
 //and can be used to visualize supposed position of obstacle's edge
 //VectorOfMeanLines: <line1, line2, line3> each line: vector of mean points:<floatX, floatY>
@@ -40,6 +25,9 @@ vector<structVecOfMeanLines> VecOfMeanLines;
 //int MeanLineIndex
 
 Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
+
+/// Global variables
+//const ColorsName COLORS;
 
 double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
 										//when working on different resolutions
@@ -239,6 +227,9 @@ int main( int argc, char* argv[] )
 	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	countAndDrawMeanLines(srcRgbImg);
+	
+	
+	
 	message = "at the end";
 	SHOW(message);
 	//here has to put comparing function with at least two Mat arguments

@@ -1,3 +1,6 @@
+/* File strLines.  */
+#ifndef FILE_STRLINES_SEEN
+#define FILE_STRLINES_SEEN
 /*
 	deklaracje typów
 	deklaracje funkcji
@@ -23,8 +26,8 @@
 	cols = s.width;
 	*/
 
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
+//#include "opencv2/imgproc.hpp"
+//#include "opencv2/highgui.hpp"
 //#include "opencv2/imgcodecs/imgcodecs.hpp"
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,26 +37,13 @@
 							// std::fill_n(array, 100, -1);
 //#include <unistd.h>//usleep
 #include <string> //to_string
-#include <ostream>//font colors
+//#include <ostream>//font colors
+#include "usefulFun.h"
 
-#define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << "\n";//nice function for debug
 
 using namespace cv;
 using namespace std;
 
-struct colors
-{
-	Vec3b blue;
-	Vec3b green;
-	Vec3b red;
-	Vec3b black;
-	Vec3b white;
-	Vec3b grey;
-	Vec3b yellow;
-	Vec3b orange;
-	Vec3b pink;
-	Vec3b violet;
-};
 
 struct structVecOfMeanLines
 {
@@ -70,7 +60,7 @@ struct structVecOfMeanLines
 };
 
 /// Global variables
-extern const colors COLORS;
+const ColorsName COLORS;
 
 //it should contain points coordinates sorted by lines and containing information about direction
 extern vector<structVecOfMeanLines> VecOfMeanLines;
@@ -81,25 +71,6 @@ extern Mat mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
 extern double resizeFactor;
 extern Mat edgesRgbMap;
-
-//displays input image resized with specified factor
-//time specifies argument for WaitKey(timeMs)
-void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs);
-
-/*from http://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
-Here is a handy function you can use to help with identifying your opencv matrices at runtime. I find it useful for debugging, at least.
-If M is a var of type Mat you can call it like so:
-
-string ty =  type2str( M.type() );
-printf("Matrix: %s %dx%d \n", ty.c_str(), M.cols, M.rows );
-
-Will output data such as:
-
-Matrix: 8UC3 640x480 
-Matrix: 64FC1 3x2 
-
-Its worth noting that there are also Matrix methods Mat::depth() and Mat::channels(). This function is just a handy way of getting a human readable interpretation from the combination of those two values whose bits are all stored in the same value.*/
-string type2str(int type);
 
 void onMouse(int evt, int x, int y, int flags, void* param);
 
@@ -152,4 +123,5 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt);
 //okreslic jako linie tylko dlugie proste i tylko je analizowac
 //wyszlo probnie ze odchylenie st. = 0.0878308 
 int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie);
-	
+
+#endif /* !FILE_STRLINES_SEEN */
