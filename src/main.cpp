@@ -1,32 +1,9 @@
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <iomanip>
-#include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
-//#include <bitset> //bitset<1> valuesChange;
-//#include <unistd.h>//usleep
+/* file main.cpp
+Analyses maps created with ROS
+Aim of this project is to define accuracy and recurrence of used mapping method
+*/	
 
 #include "main.h"
-
-using namespace cv;
-using namespace std;
-
-
-
-
-void callFunctions(Mat &aRgbMapR, int width, int minLenght)
-{
-	
-  	/// Reduce noise with a kernel 3x3
-  	//blur( src_gray, detected_edges, Size(3,3) );
-	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
-		//medianBlur ( src_gray3, src_gray2, blur_out );
-	
-	//countStdDev(aRgbMapR, aRgbMapR, width);
-}
 
 /** @function main */
 int main( int argc, char* argv[] )
@@ -45,8 +22,6 @@ int main( int argc, char* argv[] )
   	if( !srcRgbImg.data )
   		return -1;
 
-	//showResized(srcRgbImg, "srcRgbImg", 2.5, 0); //debug
-
 	int width = 6;
 	if( argc > 2 )
 	{
@@ -57,37 +32,21 @@ int main( int argc, char* argv[] )
 	string ty =  type2str( srcRgbImg.type() );
 	message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
 	SHOW(message);
-	//printf("Matrix: %s %dx%d \n", ty.c_str(), srcRgbImg.cols, srcRgbImg.rows );
 
-	//testing:
 	Mat auxRgbMap = srcRgbImg.clone();
-	
-	//showResized(auxRgbMap, "auxRgbMap", 2.5, 0); //debug
 	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
-	//showResized(auxRgbMap, "auxRgbMap", resizeFactor, 0); //debug
-	//SHOW("after colorChangeAllRgb");
-	//for(int i=1; i<=1; i+=2)
-	//{
-		//expose edges
+
 	int blur_out = 3;
 	lowThreshold = 70;
 	
-	//SHOW("1");
-	
-	//edgesRgbMap = auxRgbMap.clone();
 	auxRgbMap.copyTo(edgesRgbMap);
-	//SHOW("2");
+
 	medianBlur ( auxRgbMap, auxRgbMap, blur_out );
 	Mat greyMap;
 	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
 	Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
-		//SHOW(i); 
-		//showResized(edgesRgbMap, "testMap", 2.5, 1); //debug
-	//}
-	
-	//srcRgbImg.at<Vec3b>(50, 50) = Vec3b(0, 255, 0);
 	
 	//that map will be compared with oryginal
 	bitwise_not ( edgesRgbMap, edgesRgbMap );
@@ -104,31 +63,39 @@ int main( int argc, char* argv[] )
 	float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
 	
 	message = "at the end";
-	SHOW(message);
-	//here has to put comparing function with at least two Mat arguments
-	
-	//callFunctions(auxRgbMap, width, minLenght);
-	
-	//cvtColor(src, rgbImg, CV_GRAY2RGB);
-	
-  	/// Create a window
-  	//namedWindow( window_name, WINDOW_AUTOSIZE );
-  	/// Create a Trackbar for user to enter threshold
-	//createTrackbar( "Min Lenght:", window_name, &minLenght, 100, CannyThreshold );
-  	/// Show the image
-  	//CannyThreshold(0, 0);
-	/// Wait until user exit program by pressing a key
-  	//waitKey(0);
+	SHOW(message);//debug
 	
 	destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
   	return 0;
 }
 
+
+/// Create a window
+//namedWindow( window_name, WINDOW_AUTOSIZE );
+/// Create a Trackbar for user to enter threshold
+//createTrackbar( "Min Lenght:", window_name, &minLenght, 100, CannyThreshold );
+/// Show the image
+//CannyThreshold(0, 0);
+/// Wait until user exit program by pressing a key
+//waitKey(0);
+
+/*==OLD==:
+
+void callFunctions(Mat &aRgbMapR, int width, int minLenght)
+{
+	
+  	/// Reduce noise with a kernel 3x3
+  	//blur( src_gray, detected_edges, Size(3,3) );
+	//GaussianBlur( src_gray, gb, Size( 1, 1 ), 0, 0 );
+	//medianBlur ( src_gray3, src_gray2, blur_out );
+}
+*/
 /**
  * @function CannyThreshold
  * @brief Trackbar callback - Canny thresholds input with a ratio 1:3
  */
-void CannyThreshold(int, void*)
+/*void CannyThreshold(int, void*)
 {		
 	//valuesChange.flip();
-}
+}*/
+
