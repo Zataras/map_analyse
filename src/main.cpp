@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
 //#include "usefulFun.h"
-#include "strLines.h"
+#include "vecOfMeanLns.h"
 //#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
 
@@ -21,7 +21,7 @@ using namespace std;
 //and can be used to visualize supposed position of obstacle's edge
 //VectorOfMeanLines: <line1, line2, line3> each line: vector of mean points:<floatX, floatY>
 
-vector<structVecOfMeanLines> VecOfMeanLines;
+vector<structVecOfMeanPts> VecOfMeanPts;
 //int MeanLineIndex
 
 Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
@@ -55,17 +55,17 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
 	vector<Vec2f> vecOfMeanVals;
 	Vec2f mean;
-	for(int i=0; i<VecOfMeanLines.size(); i++)
+	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
 		int counter = 0;
-		for(int j=0; j<VecOfMeanLines[i].meanPt.size(); j++)
+		for(int j=0; j<VecOfMeanPts[i].meanPt.size(); j++)
 		{
-			cout << "VecOfMeanLines["<<i<<"].";
-			cout <<"["<<j<<"] = ("<<VecOfMeanLines[i].meanPt[j]<<"); dir = "<<VecOfMeanLines[i].direction<< "\n";
-			if(VecOfMeanLines[i].meanPt[j] != Vec2f(0,0))
+			cout << "VecOfMeanPts["<<i<<"].";
+			cout <<"["<<j<<"] = ("<<VecOfMeanPts[i].meanPt[j]<<"); dir = "<<VecOfMeanPts[i].direction<< "\n";
+			if(VecOfMeanPts[i].meanPt[j] != Vec2f(0,0))
 			{
-				sum += VecOfMeanLines[i].meanPt[j]; //can divide here?
+				sum += VecOfMeanPts[i].meanPt[j]; //can divide here?
 				counter++;
 			}
 		
@@ -84,23 +84,23 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
 	}
 	//draw mean lines
-	for(int i=0; i<VecOfMeanLines.size(); i++)
+	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
-		if(!VecOfMeanLines[i].meanPt.empty())
+		if(!VecOfMeanPts[i].meanPt.empty())
 		{
 			Point ptToDraw(-1,-1);
 			SHOW("");
-			Vec2f vBegin = *(VecOfMeanLines[i].meanPt.begin()), vEnd = *(VecOfMeanLines[i].meanPt.rbegin()); 
+			Vec2f vBegin = *(VecOfMeanPts[i].meanPt.begin()), vEnd = *(VecOfMeanPts[i].meanPt.rbegin()); 
 			SHOW("");
 			SHOW(vBegin);
 			SHOW(vEnd);
 			int jBegin, jEnd;
-			if(VecOfMeanLines[i].direction == 1)
+			if(VecOfMeanPts[i].direction == 1)
 			{
 				jBegin = vBegin[0];
 				jEnd 	 = vEnd[0];				
 			}
-			if(VecOfMeanLines[i].direction == 2)
+			if(VecOfMeanPts[i].direction == 2)
 			{
 				jBegin = vBegin[1];
 				jEnd = 	vEnd[1];
@@ -116,12 +116,12 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			for(int j=jBegin; j<=jEnd; j++)
 			{
 				//check directions
-				if(VecOfMeanLines[i].direction == 1)
+				if(VecOfMeanPts[i].direction == 1)
 				{	
 					ptToDraw.x = j;
 					ptToDraw.y = vecOfMeanVals[i][1]; //SHOW(ptToDraw.y);
 				}	
-				else if(VecOfMeanLines[i].direction == 2)
+				else if(VecOfMeanPts[i].direction == 2)
 				{
 					ptToDraw.x = vecOfMeanVals[i][0]; //SHOW(ptToDraw.x);
 					ptToDraw.y = j;
@@ -135,7 +135,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	//Zmodyfikowac juz istniejace funkcje badajace otoczenie linii, tak zeby mozna je  bylo
 	//ponownie wykonac wzdluz wyznaczonej sredniej linii i policzyc odchylenie pixeli
 	
-	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanLines.begin(); i != VecOfMeanLines.end(); i++ )
+	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanPts.begin(); i != VecOfMeanPts.end(); i++ )
 	{
 	 	for( vector<Vec2f>::iterator j = (*i).begin(); j != (*i).end(); j++ )
 		{
@@ -224,7 +224,7 @@ int main( int argc, char* argv[] )
 	namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
 	setMouseCallback("debug window", onMouse, NULL);
 	
-	createMapOfMeanLines(srcRgbImg, edgesRgbMap);
+	createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	countAndDrawMeanLines(srcRgbImg);
 	

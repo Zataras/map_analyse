@@ -8,8 +8,8 @@ set (Tutorial_VERSION_MINOR 3)
 #include (CTest)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} ./src )
-set(HEADER_FILES ./src/strLines.h ./src/usefulFun.h)
-set(SOURCES ./src/strLines.cpp ./src/usefulFun.cpp) #${PROJECT_SOURCE_DIR}/
+set(HEADER_FILES ./src/vecOfMeanLns.h ./src/usefulFun.h ./src/mainFun.h)
+set(SOURCES ./src/vecOfMeanLns.cpp ./src/usefulFun.cpp ./src/mainFun.cpp) #${PROJECT_SOURCE_DIR}/
 add_executable( launcher ./src/main.cpp ${HEADER_FILES} ${SOURCES})
 #valgrid memtest
 #add_test(example_test launcher)

@@ -45,11 +45,11 @@ using namespace cv;
 using namespace std;
 
 
-struct structVecOfMeanLines
+struct structVecOfMeanPts
 {
 	vector<Vec2f> meanPt;
 	int direction;
-	bool operator!= (const structVecOfMeanLines s1)
+	bool operator!= (const structVecOfMeanPts s1)
 	{
 		if(meanPt == s1.meanPt && direction == s1.direction)
 			return 0;
@@ -63,7 +63,7 @@ struct structVecOfMeanLines
 const ColorsName COLORS;
 
 //it should contain points coordinates sorted by lines and containing information about direction
-extern vector<structVecOfMeanLines> VecOfMeanLines;
+extern vector<structVecOfMeanPts> VecOfMeanPts;
 
 extern string message;
 
@@ -79,7 +79,7 @@ void onMouse(int evt, int x, int y, int flags, void* param);
 void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
 //Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
-void createMapOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
+void createVecOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
 
 //idea for variable naming convention: [Const][Argument/Local/Static][name][Reference, Pointer]
 //function returns coordinates of first pixel found in specified color on specified image
@@ -118,10 +118,7 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt);
 //dokladnosc to odchylenie danego pomiaru od spodziewanej wartosci referencyjnej
 //czyli moze dla kazdego pixela osobno nalezy wyznaczyc dokladnosc?
 
-//zwraca dokladnosc w procentach
-//okresla ile pixeli w najblizszym otoczeniu linii nie nalezy do linii
-//okreslic jako linie tylko dlugie proste i tylko je analizowac
-//wyszlo probnie ze odchylenie st. = 0.0878308 
-int countStdDev(Mat &edgeImg, Mat &pixImg, int otoczenie);
+
+
 
 #endif /* !FILE_STRLINES_SEEN */

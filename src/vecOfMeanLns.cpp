@@ -4,7 +4,7 @@
 	razem z jej ciałem (czyli blokiem funkcji). 
 */
 
-#include "strLines.h"
+#include "vecOfMeanLns.h"
 
 //usage e.g. cout << Color::FG_RED << "text";
 namespace ColorFonts {
@@ -69,7 +69,8 @@ void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
 	}
 }
 
-void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
+
+void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	//---------------------------------some variables--------------------------------------
 	Point pt(0,0), diffPt;
@@ -77,11 +78,11 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
 	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
 	bool allAnalysed = false;
-	structVecOfMeanLines vecOfVec2f;
+	structVecOfMeanPts vecOfVec2f;
 	vecOfVec2f.direction = -1;
 	//SHOW(vecOfVec2f.direction);
 	//waitKey(0);
-	VecOfMeanLines.push_back(vecOfVec2f);
+	VecOfMeanPts.push_back(vecOfVec2f);
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
 	while((pt.x  < (aSrcRgbImgR.cols) || pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
@@ -96,10 +97,10 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//----------------debug-------------------
 		cout << __LINE__ << ": New cycle" <<endl;
 		
-		//Add new empty element to VecOfMeanLines for edge which will be found next
+		//Add new empty element to VecOfMeanPts for edge which will be found next
 		
 		//SHOW(" ");
-		//VecOfMeanLines.push_back(vecOfVec2f);//problem - adding also when line not accepted
+		//VecOfMeanPts.push_back(vecOfVec2f);//problem - adding also when line not accepted
 		//SHOW(" ");		
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
@@ -111,8 +112,8 @@ void createMapOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
 		
-		if(*(VecOfMeanLines.rbegin()) != vecOfVec2f)
-			VecOfMeanLines.push_back(vecOfVec2f);
+		if(*(VecOfMeanPts.rbegin()) != vecOfVec2f)
+			VecOfMeanPts.push_back(vecOfVec2f);
 		
 		//===while there is still any not analysed pixel in current series===
 		while( nextPt.x != -1 )
@@ -519,21 +520,21 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		float meanPty = (float) meanSum.y / meanCounter;
 		//cout << meanPty<<"\n";
 		//Vec2f meanPtL = Vec2f(meanPtx, meanPty);
-		//structVecOfMeanLines strOML;
+		//structVecOfMeanPts strOML;
 		//strOML.meanPt.push_back(Vec2f(meanPtx, meanPty)); //!!
 		//strOML.direction = currDir;
 		//add last counted mean point to current egde's points vector
-		SHOW(VecOfMeanLines.size());
-		VecOfMeanLines[VecOfMeanLines.size()-1].meanPt.push_back(Vec2f(meanPtx, meanPty));
-		VecOfMeanLines[VecOfMeanLines.size()-1].direction = currDir;
-		/*string message = "whole VecOfMeanLines data below:";
+		SHOW(VecOfMeanPts.size());
+		VecOfMeanPts[VecOfMeanPts.size()-1].meanPt.push_back(Vec2f(meanPtx, meanPty));
+		VecOfMeanPts[VecOfMeanPts.size()-1].direction = currDir;
+		/*string message = "whole VecOfMeanPts data below:";
 		SHOW(message);
-		for(int i=0; i<VecOfMeanLines.size(); i++)
+		for(int i=0; i<VecOfMeanPts.size(); i++)
 		{
-			for(int j=0; j<VecOfMeanLines[i].size(); j++)
+			for(int j=0; j<VecOfMeanPts[i].size(); j++)
 			{
-				cout << "VecOfMeanLines["<<i<<"].";
-				cout <<"["<<j<<"] = ("<<VecOfMeanLines[i][j]<<")\n";
+				cout << "VecOfMeanPts["<<i<<"].";
+				cout <<"["<<j<<"] = ("<<VecOfMeanPts[i][j]<<")\n";
 			}
 		}*/
 	}
