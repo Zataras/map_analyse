@@ -1,149 +1,21 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
-//#include "opencv2/imgcodecs/imgcodecs.hpp"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
 #include <algorithm> // In C++, to set them all to -1, you can use something like std::fill_n (from <algorithm>):
-//#include "usefulFun.h"
-#include "vecOfMeanLns.h"
 //#include <bitset> //bitset<1> valuesChange;
 //#include <unistd.h>//usleep
 
+#include "main.h"
+
 using namespace cv;
 using namespace std;
- 
- 
-/// Global variables
 
-//this global variable consists of vector of mean values counted for each row in series
-//and can be used to visualize supposed position of obstacle's edge
-//VectorOfMeanLines: <line1, line2, line3> each line: vector of mean points:<floatX, floatY>
 
-vector<structVecOfMeanPts> VecOfMeanPts;
-//int MeanLineIndex
 
-Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
-
-/// Global variables
-//const ColorsName COLORS;
-
-double resizeFactor = 10.0; 	//global to change it globaly in whole project from one place 
-										//when working on different resolutions
-string message;
-
-int edgeThresh = 1;
-int lowThreshold = 210, blur_in = 4, blur_out;
-//int minLenght = 35; 
-int maxGap = 20, thresholdHLP = 15;
-int const max_lowThreshold = 300;
-int ratio = 3;
-int kernel_size = 3;
-string str = "Edge Map";//allowed conversion
-const char* window_name = str.c_str();
-
-int ANALYSED_PX = 0;
-
-void CannyThreshold(int, void*);
-
-/*
-1) Count mean for each line (first index)
-(2)) Draw line representing mean value for each line - has to refer to proper coordinate: x OR y (for debug)
-*/
-void countAndDrawMeanLines(Mat &aRsrcRgbImg)
-{
-	vector<Vec2f> vecOfMeanVals;
-	Vec2f mean;
-	for(int i=0; i<VecOfMeanPts.size(); i++)
-	{
-		Vec2f sum = Vec2f(0,0);
-		int counter = 0;
-		for(int j=0; j<VecOfMeanPts[i].meanPt.size(); j++)
-		{
-			cout << "VecOfMeanPts["<<i<<"].";
-			cout <<"["<<j<<"] = ("<<VecOfMeanPts[i].meanPt[j]<<"); dir = "<<VecOfMeanPts[i].direction<< "\n";
-			if(VecOfMeanPts[i].meanPt[j] != Vec2f(0,0))
-			{
-				sum += VecOfMeanPts[i].meanPt[j]; //can divide here?
-				counter++;
-			}
-		
-		}
-
-		if(counter)
-		{
-			sum = sum / counter;
-			vecOfMeanVals.push_back(sum);
-		}
-	}
-	//vecOfMeanVals.shrink_to_fit();
-	for(int j=0; j<vecOfMeanVals.size(); j++)
-	{
-		cout << "vecOfMeanVals["<<j<<"]";
-		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
-	}
-	//draw mean lines
-	for(int i=0; i<VecOfMeanPts.size(); i++)
-	{
-		if(!VecOfMeanPts[i].meanPt.empty())
-		{
-			Point ptToDraw(-1,-1);
-			SHOW("");
-			Vec2f vBegin = *(VecOfMeanPts[i].meanPt.begin()), vEnd = *(VecOfMeanPts[i].meanPt.rbegin()); 
-			SHOW("");
-			SHOW(vBegin);
-			SHOW(vEnd);
-			int jBegin, jEnd;
-			if(VecOfMeanPts[i].direction == 1)
-			{
-				jBegin = vBegin[0];
-				jEnd 	 = vEnd[0];				
-			}
-			if(VecOfMeanPts[i].direction == 2)
-			{
-				jBegin = vBegin[1];
-				jEnd = 	vEnd[1];
-			}
-			//check if end greater than begin
-			if(jBegin > jEnd)
-			{
-				int jTemp = jBegin;
-				jBegin = jEnd;
-				jEnd 	 = jTemp;
-			}
-			SHOW(i);
-			for(int j=jBegin; j<=jEnd; j++)
-			{
-				//check directions
-				if(VecOfMeanPts[i].direction == 1)
-				{	
-					ptToDraw.x = j;
-					ptToDraw.y = vecOfMeanVals[i][1]; //SHOW(ptToDraw.y);
-				}	
-				else if(VecOfMeanPts[i].direction == 2)
-				{
-					ptToDraw.x = vecOfMeanVals[i][0]; //SHOW(ptToDraw.x);
-					ptToDraw.y = j;
-				}
-				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 1); //debug
-			}
-		}
-	}
-	//!! TODO:
-	//Zmodyfikowac juz istniejace funkcje badajace otoczenie linii, tak zeby mozna je  bylo
-	//ponownie wykonac wzdluz wyznaczonej sredniej linii i policzyc odchylenie pixeli
-	
-	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanPts.begin(); i != VecOfMeanPts.end(); i++ )
-	{
-	 	for( vector<Vec2f>::iterator j = (*i).begin(); j != (*i).end(); j++ )
-		{
-		 	Vec2f temp = *j;
-		 	SHOW(temp);
-		}
-	}*/
-}
 
 void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 {
@@ -228,7 +100,8 @@ int main( int argc, char* argv[] )
 	
 	countAndDrawMeanLines(srcRgbImg);
 	
-	
+	Point startPt, endPt;	
+	float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
 	
 	message = "at the end";
 	SHOW(message);

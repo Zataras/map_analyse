@@ -10,6 +10,7 @@ Header file
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 #include <ostream>//font colors
+#include <iomanip>//setw?
 
 #define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << "\n";//nice function for debug
 
@@ -42,6 +43,9 @@ struct ColorsName
 		violet(Vec3b(153,100,153))
 	{}
 };
+
+//global variable:
+const ColorsName COLORS;
 
 //usage e.g. cout << Color::FG_RED << "text";
 /*struct TermFontColors 

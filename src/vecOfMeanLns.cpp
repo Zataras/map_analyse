@@ -36,38 +36,7 @@ namespace ColorFonts {
     }
 }
 
-void onMouse(int evt, int x, int y, int flags, void* param) {
-    if(evt == EVENT_LBUTTONDOWN) {
-        //Point* ptPtr = (Point*)param;
-        Point Pt = Point(x,y);
-        Pt.x = round(Pt.x / resizeFactor);
-        Pt.y = round(Pt.y / resizeFactor);
-        Vec3b keptColor = edgesRgbMap.at<Vec3b>(Pt);
-        edgesRgbMap.at<Vec3b>(Pt) = COLORS.violet;
-        showResized(edgesRgbMap, "debug window", resizeFactor, 300);
-        edgesRgbMap.at<Vec3b>(Pt) = keptColor;
-        showResized(edgesRgbMap, "debug window", resizeFactor, 1);
-        
-        cout << "Clicked on " << Pt << " coloured " << keptColor << "\n";
-    }
-}
 
-//change grey pixels to black to avoid double parallel lines:
-//takes references and changes dst colours
-//third arg is colour of grey
-void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor)
-{
-	for(int x = 0; x < Img.cols; x++){
-		//SHOW(x);
-		for(int y = 0; y < Img.rows; y++){
-			//SHOW(y);
-			//Vec3b pxColor = Img.at<Vec3b>(x, y);
-			if( Img.at<Vec3b>(y, x) == srcColor)//!!
-				Img.at<Vec3b>(y, x) = dstColor;	//!!
-			//showResized(Img, "Img", resizeFactor, 1);
-		}
-	}
-}
 
 
 void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)

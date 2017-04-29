@@ -2,10 +2,6 @@
 
 #include "usefulFun.h"
 
-//BGR
-
-
-
 
 string type2str(int type) {
   string r;

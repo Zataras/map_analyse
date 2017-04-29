@@ -39,28 +39,16 @@
 #include <string> //to_string
 //#include <ostream>//font colors
 #include "usefulFun.h"
-
+#include "mainFun.h"
 
 using namespace cv;
 using namespace std;
 
 
-struct structVecOfMeanPts
-{
-	vector<Vec2f> meanPt;
-	int direction;
-	bool operator!= (const structVecOfMeanPts s1)
-	{
-		if(meanPt == s1.meanPt && direction == s1.direction)
-			return 0;
-		else
-			return 1;
-	}
-	
-};
+
 
 /// Global variables
-const ColorsName COLORS;
+
 
 //it should contain points coordinates sorted by lines and containing information about direction
 extern vector<structVecOfMeanPts> VecOfMeanPts;
@@ -72,11 +60,6 @@ extern int ANALYSED_PX;
 extern double resizeFactor;
 extern Mat edgesRgbMap;
 
-void onMouse(int evt, int x, int y, int flags, void* param);
-
-//changes one color pixels to another to avoid double parallel lines:
-//takes references and changes to dst colour
-void colorChangeAllRgb(Mat &Img, Vec3b srcColor, Vec3b dstColor);
 
 //Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
 void createVecOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
