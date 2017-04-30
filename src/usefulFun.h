@@ -112,23 +112,6 @@ const ColorsName COLORS;
     }
 }*/
 
-/*const colors_name COLORS = 
-{
-	//	  (  B,  G,  R)
-	Vec3b(255,  0,  0), 	//blue
-	Vec3b(  0,255,  0), 	//green
-	Vec3b(  0,  0,255), 	//red
-	Vec3b(  0,  0,  0),	//black
-	Vec3b(255,255,255),	//white
-	Vec3b(205,205,205),	//grey
-	Vec3b(  0,255,255),	//yellow
-	Vec3b(  0,153,255),	//orange
-	Vec3b(255,153,255),	//pink
-	Vec3b(153,100,153)	//violet
-};*/
-
-
-
 /*from http://stackoverflow.com/questions/10167534/how-to-find-out-what-type-of-a-mat-object-is-with-mattype-in-opencv
 Here is a handy function you can use to help with identifying your opencv matrices at runtime. I find it useful for debugging, at least.
 If M is a var of type Mat you can call it like so:

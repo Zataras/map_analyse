@@ -2,7 +2,6 @@
 
 #include "usefulFun.h"
 
-
 string type2str(int type) {
   string r;
 

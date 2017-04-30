@@ -16,19 +16,6 @@
   	wszystko oprócz bloków funkcji. 
 */
 
-	/*====SCIĄGA MAT SIZE====:
-	cv:Mat mat;
-	int rows = mat.rows;
-	int cols = mat.cols;
-
-	cv::Size s = mat.size();
-	rows = s.height;
-	cols = s.width;
-	*/
-
-//#include "opencv2/imgproc.hpp"
-//#include "opencv2/highgui.hpp"
-//#include "opencv2/imgcodecs/imgcodecs.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -44,22 +31,15 @@
 using namespace cv;
 using namespace std;
 
-
-
-
 /// Global variables
-
 
 //it should contain points coordinates sorted by lines and containing information about direction
 extern vector<structVecOfMeanPts> VecOfMeanPts;
-
 extern string message;
-
 extern Mat mapaRobocza, color_dst3;
 extern int ANALYSED_PX;
 extern double resizeFactor;
 extern Mat edgesRgbMap;
-
 
 //Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
 void createVecOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
@@ -101,7 +81,15 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt);
 //dokladnosc to odchylenie danego pomiaru od spodziewanej wartosci referencyjnej
 //czyli moze dla kazdego pixela osobno nalezy wyznaczyc dokladnosc?
 
+	/*====SCIĄGA MAT SIZE====:
+	cv:Mat mat;
+	int rows = mat.rows;
+	int cols = mat.cols;
 
+	cv::Size s = mat.size();
+	rows = s.height;
+	cols = s.width;
+	*/
 
 
 #endif /* !FILE_STRLINES_SEEN */

@@ -36,9 +36,6 @@ namespace ColorFonts {
     }
 }
 
-
-
-
 void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	//---------------------------------some variables--------------------------------------
@@ -226,18 +223,6 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	message = "Out of while loop";
 	SHOW(message);	
 }
-
-/*PROBLEM!:
-135: pt = [83, 73]
-263: nextPt.x = -1
-127: New cycle
-135: pt = [86, 73]
-263: nextPt.x = -1
-127: New cycle
-135: pt = [89, 73]
-263: nextPt.x = -1
-*** Error in `./launcher': free(): invalid next size (normal): 0x0000000001093020 ****/
-
 
 //idea for variable naming convention: [Argument/Local/Static][name][Reference, Pointer]
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
@@ -485,14 +470,9 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 		meanPt.x = meanSum.x / meanCounter;
 		meanPt.y = meanSum.y / meanCounter;
 		float meanPtx = (float) meanSum.x / meanCounter;
-		//cout << meanPtx<<",";
+
 		float meanPty = (float) meanSum.y / meanCounter;
-		//cout << meanPty<<"\n";
-		//Vec2f meanPtL = Vec2f(meanPtx, meanPty);
-		//structVecOfMeanPts strOML;
-		//strOML.meanPt.push_back(Vec2f(meanPtx, meanPty)); //!!
-		//strOML.direction = currDir;
-		//add last counted mean point to current egde's points vector
+
 		SHOW(VecOfMeanPts.size());
 		VecOfMeanPts[VecOfMeanPts.size()-1].meanPt.push_back(Vec2f(meanPtx, meanPty));
 		VecOfMeanPts[VecOfMeanPts.size()-1].direction = currDir;

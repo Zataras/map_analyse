@@ -5,48 +5,93 @@ Code file mainFun.cpp
 
 #include "mainFun.h"
 
+//usage e.g. cout << Color::FG_RED << "text";
+/*namespace ColorFonts {
+    enum Code {
+        FG_RED      		= 31,
+        FG_GREEN    		= 32,
+        FG_BLUE     		= 34,
+        FG_BLACK 	  		= 30,
+        FG_YELLOW 		= 33,
+        FG_MAGENTA 		= 35,
+        FG_CYAN 			= 36,
+        FG_LIGHT_GRAY 	= 37, 
+        FG_DARK_GRAY 	= 90, 
+        FG_LIGHT_RED 	= 91, 
+        FG_LIGHT_GREEN 	= 92, 
+        FG_LIGHT_YELLOW = 93, 
+        FG_LIGHT_BLUE 	= 94, 
+        FG_LIGHT_MAGENTA= 95, 
+        FG_LIGHT_CYAN 	= 96, 
+        FG_WHITE 			= 97,
+        FG_DEFAULT  		= 39,
+        BG_RED      = 41,
+        BG_GREEN    = 42,
+        BG_BLUE     = 44,
+        BG_DEFAULT  = 49
+    };
+    std::ostream& operator<<(std::ostream& os, Code code) {
+        return os << "\033[" << static_cast<int>(code) << "m";
+    }
+}*/
+
 float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 {
-	/*if(currDir == 1)//( diffPt.x != 0 )
+	int currDir = 0;
+	Point diffPt = endPt - startPt;
+	if(diffPt.x = 0)
+		currDir = 2;
+	else if (diffPt.y = 0)
+		currDir = 1;
+	
+	Point currPt = startPt;
+	Point currPtMod;
+	
+	do
 	{
-		for( int i = 1; i<=width; i++ )
+		if(currDir == 1)
 		{
-			if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
-				PrevPtMod.x = prevPt.x;
-				PrevPtMod.y = prevPt.y + i;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
-			}
+			for( int i = 1; i<=width; i++ )
+			{
+				if( currPt.y + i < srcImg.rows ){ // if not exceeds maps size
+					currPtMod.x = currPt.x;
+					currPtMod.y = currPt.y + i;
+
+					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					//pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+				}
 		
-			if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
-				PrevPtMod.x = prevPt.x;
-				PrevPtMod.y = prevPt.y - i;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+				if( currPt.y - i >= 0 ){ // if not exceeds maps size - 0px
+					currPtMod.x = currPt.x;
+					currPtMod.y = currPt.y - i;
+					
+					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					//pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+				}
 			}
+			currPt.x++;
 		}
-	}
-	if(currDir == 2)
-	{
-		for(int i = 1; i<=width; i++){
-			if( prevPt.x + i < aRgbEdgeMapR.cols ){
-				PrevPtMod.x = prevPt.x + i;
-				PrevPtMod.y = prevPt.y;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+		if(currDir == 2)
+		{
+			for(int i = 1; i<=width; i++){
+				if( currPt.x + i < srcImg.cols ){
+					currPtMod.x = currPt.x + i;
+					currPtMod.y = currPt.y;
+					
+					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					//pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+				}
+				if( currPt.x - i >= 0 ){
+					currPtMod.x = currPt.x - i;
+					currPtMod.y = currPt.y;
+					
+					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					//pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+				}
 			}
-			if( prevPt.x - i >= 0 ){
-				PrevPtMod.x = prevPt.x - i;
-				PrevPtMod.y = prevPt.y;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
-				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
-			}
+			currPt.y++;
 		}
-	}*/
+	}while(currPt != endPt);
 }
 
 /*
