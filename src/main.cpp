@@ -58,10 +58,44 @@ int main( int argc, char* argv[] )
 	createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 	
 	countAndDrawMeanLines(srcRgbImg);
+	message = "after draw";
+	SHOW(message);
+	Point startPt, endPt;
+	for(int i=0; i<VecOfMeanPts.size(); i++)
+	{
+		SHOW("");
+		startPt =  static_cast<Point>(*(VecOfMeanPts[i].meanPt.begin()));
+		endPt = static_cast<Point>(*(VecOfMeanPts[i].meanPt.rbegin()));
+		//write mean value
+		if(VecOfMeanPts[i].direction == 1)
+		{
+			startPt.y = vecOfMeanVals[i][1];
+			endPt.y   = vecOfMeanVals[i][1];
+			//check if end greater than begin
+			if(startPt.x > endPt.x)
+			{
+				int temp = startPt.x;
+				startPt.x = endPt.x;
+				endPt.x 	 = temp;
+			}
+		}
+		else if(VecOfMeanPts[i].direction == 2)
+		{
+			startPt.x = vecOfMeanVals[i][0];
+			endPt.x   = vecOfMeanVals[i][0];
+			//check if end greater than begin
+			if(startPt.y > endPt.y)
+			{
+				int temp = startPt.y;
+				startPt.y = endPt.y;
+				endPt.y 	 = temp;
+			}
+		}
+		
+		float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
 	
-	Point startPt, endPt;	
-	float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
-	
+		SHOW(stdDev);
+	}
 	message = "at the end";
 	SHOW(message);//debug
 	

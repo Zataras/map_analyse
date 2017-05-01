@@ -540,7 +540,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!!
+	//showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!! VISU
   
   return s;
 	

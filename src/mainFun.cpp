@@ -37,15 +37,19 @@ Code file mainFun.cpp
 
 float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 {
+	SHOW(startPt);
+	SHOW(endPt);
 	int currDir = 0;
 	Point diffPt = endPt - startPt;
-	if(diffPt.x = 0)
+	SHOW(diffPt);
+	if(diffPt.x == 0)
 		currDir = 2;
-	else if (diffPt.y = 0)
+	else if (diffPt.y == 0)
 		currDir = 1;
-	
+	SHOW(currDir);
 	Point currPt = startPt;
 	Point currPtMod;
+	Point devSumVsCounter = Point(0,0); //x is sum, y is counter
 	
 	do
 	{
@@ -57,16 +61,24 @@ float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 					currPtMod.x = currPt.x;
 					currPtMod.y = currPt.y + i;
 
-					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
-					//pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+					//srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					if(srcImg.at<Vec3b>(currPtMod) == COLORS.black)
+					{
+						devSumVsCounter.x += i;
+						devSumVsCounter.y++;
+					}
 				}
 		
 				if( currPt.y - i >= 0 ){ // if not exceeds maps size - 0px
 					currPtMod.x = currPt.x;
 					currPtMod.y = currPt.y - i;
 					
-					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
-					//pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+					//srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					if(srcImg.at<Vec3b>(currPtMod) == COLORS.black)
+					{
+						devSumVsCounter.x += i;
+						devSumVsCounter.y++;
+					}
 				}
 			}
 			currPt.x++;
@@ -78,20 +90,31 @@ float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 					currPtMod.x = currPt.x + i;
 					currPtMod.y = currPt.y;
 					
-					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
-					//pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+					//srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					if(srcImg.at<Vec3b>(currPtMod) == COLORS.black)
+					{
+						devSumVsCounter.x += i;
+						devSumVsCounter.y++;
+					}
 				}
 				if( currPt.x - i >= 0 ){
 					currPtMod.x = currPt.x - i;
 					currPtMod.y = currPt.y;
 					
-					srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
-					//pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, srcImg, pointsArraySize, currPtMod, counterAllOut, i, maxWidth);
+					//srcImg.at<Vec3b>(currPtMod) = COLORS.blue;
+					if(srcImg.at<Vec3b>(currPtMod) == COLORS.black)
+					{
+						devSumVsCounter.x += i;
+						devSumVsCounter.y++;
+					}
 				}
 			}
 			currPt.y++;
 		}
+		//SHOW(currPt);
+		//SHOW(currDir);
 	}while(currPt != endPt);
+	return devSumVsCounter.x / devSumVsCounter.y;
 }
 
 /*
@@ -100,7 +123,7 @@ float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 */
 void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
-	vector<Vec2f> vecOfMeanVals;
+	//vector<Vec2f> vecOfMeanVals;
 	Vec2f mean;
 	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
@@ -133,14 +156,15 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	//draw mean lines
 	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
+		SHOW("");
 		if(!VecOfMeanPts[i].meanPt.empty())
 		{
 			Point ptToDraw(-1,-1);
-			SHOW("");
+			//SHOW("");
 			Vec2f vBegin = *(VecOfMeanPts[i].meanPt.begin()), vEnd = *(VecOfMeanPts[i].meanPt.rbegin()); 
-			SHOW("");
-			SHOW(vBegin);
-			SHOW(vEnd);
+			//SHOW("");
+			//SHOW(vBegin);
+			//SHOW(vEnd);
 			int jBegin, jEnd;
 			if(VecOfMeanPts[i].direction == 1)
 			{
@@ -162,6 +186,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			SHOW(i);
 			for(int j=jBegin; j<=jEnd; j++)
 			{
+				//SHOW(j);
 				//check directions
 				if(VecOfMeanPts[i].direction == 1)
 				{	
@@ -174,7 +199,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 					ptToDraw.y = j;
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 1); //debug
+				//showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 1); //debug VISU 
 			}
 		}
 	}
