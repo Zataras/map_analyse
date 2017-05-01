@@ -57,10 +57,16 @@ int main( int argc, char* argv[] )
 	
 	createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 	
+	//remove last element of VecOfMeanPts
+	//because it's being added "in case"
+	VecOfMeanPts.pop_back();
+	
 	countAndDrawMeanLines(srcRgbImg);
 	message = "after draw";
 	SHOW(message);
 	Point startPt, endPt;
+	SHOW(VecOfMeanPts.size());
+	Vec2f sumStdDevVsCount;
 	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
 		SHOW("");
@@ -93,9 +99,14 @@ int main( int argc, char* argv[] )
 		}
 		
 		float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
-	
 		SHOW(stdDev);
+		sumStdDevVsCount[0] += stdDev;
+		sumStdDevVsCount[1]++;
 	}
+	float finalStdDev = sumStdDevVsCount[0] / sumStdDevVsCount[1];
+	
+	SHOW(finalStdDev);
+	
 	message = "at the end";
 	SHOW(message);//debug
 	
