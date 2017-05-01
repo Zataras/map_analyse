@@ -42,7 +42,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	Point pt(0,0), diffPt;
 	bool minLineLenReached, lookInRevDir;
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
-	int diffSumLimit = 5, lineLenghtMin = 20, dirChangeLimit = 3;
+	int diffSumLimit = 4, lineLenghtMin = 30, dirChangeLimit = 3;
 	bool allAnalysed = false;
 	structVecOfMeanPts vecOfVec2f;
 	vecOfVec2f.direction = -1;
@@ -51,7 +51,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	VecOfMeanPts.push_back(vecOfVec2f);
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
-	while((pt.x  < (aSrcRgbImgR.cols) || pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
+	while((pt.x  < (aSrcRgbImgR.cols) | pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
 	{	
 		//counting any line
 		linesCounter++;
@@ -86,7 +86,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		{
 			
 			//update points values
-			if( !lookInRevDir || lineLength != 0 )
+			if( !lookInRevDir | lineLength != 0 )
 			{
 				prevPt = actPt;
 				actPt = nextPt;
@@ -125,7 +125,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 				diffSum += diffPt.x;
 
 			//save first considered currently direction as refernece
-			if( currDir == -1 && direction != 0 )
+			if( currDir == -1 & direction != 0 )
 				currDir = direction;
 
 			//if current direction is not equal to currenly analysed, increase counter value
@@ -135,19 +135,20 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			else
 				dirChangeCount = 0;
 			
+			SHOW(minLineLenReached);
 			//set true if reached
-			if( lineLength > lineLenghtMin && ~lookInRevDir )
+			if(lineLength > lineLenghtMin & (~lookInRevDir) & (~minLineLenReached))
 			{
 				minLineLenReached = true;
 				cout << __LINE__ << ": Line accepted" << endl;
 				
 			}		
 			
-			//if sum of direction changes or whole coordinate change limit is exceed 
+			//if sum of direction changes or whole coordinate change limit is exceeded
 			//then check if line has reched minimum length
 			//is yes it will be further analysed
-			
-			if ( dirChangeCount > dirChangeLimit || diffSum > diffSumLimit )
+			SHOW(lookInRevDir);
+			if ( dirChangeCount > dirChangeLimit | diffSum > diffSumLimit & ~minLineLenReached)
 			{
 				//currDir = -1;
 				diffSum = 0;
@@ -166,6 +167,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					//if not set -1 and this series will be ommited
 					SHOW(""); cout << "	dir change limit exceeded" << endl;
 					nextPt.x = -1;
+					break;
 				}
 			}
 			
@@ -230,7 +232,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	bool stop = false;
 	Point pt = aPt;
 	
-	while((pt.x < (aImgR.cols) || pt.y < (aImgR.rows)) && stop == false){
+	while((pt.x < (aImgR.cols) | pt.y < (aImgR.rows)) && stop == false){
 		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
 			//SHOW(pt);
@@ -299,7 +301,7 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 				if(modPt.x < srcImg.cols && modPt.y < srcImg.rows)
 				{
 					//SHOW(modPt);
-					if( (srcImg.at<Vec3b>(modPt) == wantedColor || srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
+					if( (srcImg.at<Vec3b>(modPt) == wantedColor | srcImg.at<Vec3b>(modPt) == COLORS.black) && modPt != prevPt )
 					{	
 						foundPt = modPt;
 						found = true;
@@ -319,7 +321,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	Point nextPt(-1,-1);
 
 	//cout << "In findNextPixelEdge" << endl;
-	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 3, lookInRevDir );
+	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 2, lookInRevDir );
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
 	if( !lookInRevDir )
@@ -350,9 +352,9 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
 {
 	//static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
-	SHOW(PrevPtMod);
-	cout << ColorFonts::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
-	cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << ColorFonts::FG_DEFAULT << endl;
+	//SHOW(PrevPtMod);
+	//cout << ColorFonts::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
+	//cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << ColorFonts::FG_DEFAULT << endl;
 	
 	++counterAllOut;
 	//waitKey(0);
@@ -413,7 +415,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			if( prevPt.y + i < aRgbEdgeMapR.rows ){ // if not exceeds maps size
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y + i;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
+				//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 			}
@@ -421,7 +423,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 			if( prevPt.y - i >= 0 ){ // if not exceeds maps size - 0px
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y - i;
-				cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
+				//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
 			}
@@ -473,7 +475,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 		float meanPty = (float) meanSum.y / meanCounter;
 
-		SHOW(VecOfMeanPts.size());
+		//SHOW(VecOfMeanPts.size());
 		VecOfMeanPts[VecOfMeanPts.size()-1].meanPt.push_back(Vec2f(meanPtx, meanPty));
 		VecOfMeanPts[VecOfMeanPts.size()-1].direction = currDir;
 		/*string message = "whole VecOfMeanPts data below:";
@@ -540,7 +542,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	//showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!! VISU
+	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug //!! VISU
   
   return s;
 	
@@ -566,10 +568,10 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 	//cout << __LINE__ << ": diffs are: " << diffActPrev << diffNextAct << endl;
  
 	if( abs(diffActPrev.x) == 1 && abs(diffNextAct.x) == 1 )
-		if( abs(diffActPrev.y) == 0 || abs(diffNextAct.y) == 0 ) //or until diagonal analysed
+		if( abs(diffActPrev.y) == 0 | abs(diffNextAct.y) == 0 ) //or until diagonal analysed
 			direction = 1; // vertical
 	if( abs(diffActPrev.y) == 1 && abs(diffNextAct.y) == 1 )
-		if( abs(diffActPrev.x) == 0 || abs(diffNextAct.x) == 0 ) //or until diagonal analysed
+		if( abs(diffActPrev.x) == 0 | abs(diffNextAct.x) == 0 ) //or until diagonal analysed
 			direction = 2; // horizontal
 	
 	return direction;
