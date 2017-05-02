@@ -34,6 +34,7 @@ int main( int argc, char* argv[] )
 	SHOW(message);
 
 	Mat auxRgbMap = srcRgbImg.clone();
+	Mat srcRgbImgCloned = srcRgbImg.clone();
 	
 	//Gray pixels to black:
 	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
@@ -55,7 +56,7 @@ int main( int argc, char* argv[] )
 	namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
 	setMouseCallback("debug window", onMouse, NULL);
 	
-	createVecOfMeanLines(srcRgbImg, edgesRgbMap);
+	createVecOfMeanLines(srcRgbImgCloned, edgesRgbMap);
 	
 	//remove last element of VecOfMeanPts
 	//because it's being added "in case"

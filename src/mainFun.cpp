@@ -168,12 +168,12 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			//SHOW(vBegin);
 			//SHOW(vEnd);
 			int jBegin, jEnd;
-			if(VecOfMeanPts[i].direction == 1)
+			if(abs(VecOfMeanPts[i].direction == 1))
 			{
 				jBegin = vBegin[0];
 				jEnd 	 = vEnd[0];				
 			}
-			if(VecOfMeanPts[i].direction == 2)
+			if(abs(VecOfMeanPts[i].direction == 2))
 			{
 				jBegin = vBegin[1];
 				jEnd = 	vEnd[1];
@@ -190,12 +190,12 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			{
 				//SHOW(j);
 				//check directions
-				if(VecOfMeanPts[i].direction == 1)
+				if(abs(VecOfMeanPts[i].direction) == 1)
 				{	
 					ptToDraw.x = j;
 					ptToDraw.y = vecOfMeanVals[i][1]; //SHOW(ptToDraw.y);
 				}	
-				else if(VecOfMeanPts[i].direction == 2)
+				else if(abs(VecOfMeanPts[i].direction == 2))
 				{
 					ptToDraw.x = vecOfMeanVals[i][0]; //SHOW(ptToDraw.x);
 					ptToDraw.y = j;

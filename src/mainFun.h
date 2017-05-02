@@ -36,7 +36,6 @@ extern const ColorsName COLORS;
 extern vector<structVecOfMeanPts> VecOfMeanPts;
 extern vector<Vec2f> vecOfMeanVals;
 
-
 //returns value of standard deviation in pixels
 //arguments: Mat with only black and white pixels
 //		width - how far from line to check
