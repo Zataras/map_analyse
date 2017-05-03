@@ -140,9 +140,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				sum += VecOfMeanPts[i].meanPt[j]; //can divide here?
 				counter++;
 			}
-		
 		}
-
 		if(counter)
 		{
 			sum = sum / counter;
@@ -165,8 +163,8 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			//SHOW("");
 			Vec2f vBegin = *(VecOfMeanPts[i].meanPt.begin()), vEnd = *(VecOfMeanPts[i].meanPt.rbegin()); 
 			//SHOW("");
-			//SHOW(vBegin);
-			//SHOW(vEnd);
+			SHOW(vBegin);
+			SHOW(vEnd);
 			int jBegin, jEnd;
 			if(abs(VecOfMeanPts[i].direction == 1))
 			{
@@ -185,29 +183,32 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				jBegin = jEnd;
 				jEnd 	 = jTemp;
 			}
+			SHOW(jBegin);
+			SHOW(jEnd);
 			SHOW(i);
 			for(int j=jBegin; j<=jEnd; j++)
 			{
-				//SHOW(j);
+				SHOW(j);
 				//check directions
 				if(abs(VecOfMeanPts[i].direction) == 1)
 				{	
 					ptToDraw.x = j;
-					ptToDraw.y = vecOfMeanVals[i][1]; //SHOW(ptToDraw.y);
+					ptToDraw.y = vecOfMeanVals[i][1]; SHOW(ptToDraw.y);
 				}	
 				else if(abs(VecOfMeanPts[i].direction == 2))
 				{
-					ptToDraw.x = vecOfMeanVals[i][0]; //SHOW(ptToDraw.x);
+					ptToDraw.x = vecOfMeanVals[i][0]; SHOW(ptToDraw.x);
 					ptToDraw.y = j;
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 0); //debug VISU 
+				//namedWindow("MeanLines", WINDOW_AUTOSIZE);
+				
 			}
+			SHOW("!");
+			//destroyAllWindows();
+			showResized(aRsrcRgbImg, "de", resizeFactor, 10); //debug VISU 
 		}
 	}
-	//!! TODO:
-	//Zmodyfikowac juz istniejace funkcje badajace otoczenie linii, tak zeby mozna je  bylo
-	//ponownie wykonac wzdluz wyznaczonej sredniej linii i policzyc odchylenie pixeli
 	
 	/*for( vector<vector<Vec2f>>::iterator i = VecOfMeanPts.begin(); i != VecOfMeanPts.end(); i++ )
 	{

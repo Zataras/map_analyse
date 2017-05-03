@@ -42,9 +42,9 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	Point pt(0,0), diffPt;
 	bool minLineLenReached, lookInRevDir;
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
-	int diffSumLimit = 6; //
+	int diffSumLimit = 3; //limit for change of whole coordinate
 	int lineLenghtMin = 45; 
-	int dirChangeLimit = 3;//limit for changing direction of on pixel after another
+	int dirChangeLimit = 4;//limit for changing direction of on pixel after another
 	bool allAnalysed = false;
 	structVecOfMeanPts vecOfVec2f;
 	vecOfVec2f.direction = -1;
@@ -73,12 +73,14 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//------Looking for any black pixel to start with-----
 		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		//SHOW(pt);
-		if(pt.x == -1){
+		if(pt.x == -1)
+		{
 			allAnalysed = true;//doesnt work
 			SHOW(allAnalysed);
 		}
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
+		
 		
 		if(*(VecOfMeanPts.rbegin()) != vecOfVec2f)
 			VecOfMeanPts.push_back(vecOfVec2f);
@@ -102,8 +104,9 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					//prevPt = tempPt;
 				}			
 			}
-			
+			//message = "before";SHOW(message);
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
+			//message = "after";SHOW(message);
 			if(nextPt.x == -1 & ~minLineLenReached)
 			{
 				message = "next Pixel on Edge not found";
@@ -113,7 +116,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			{
 				
 			}*/
-			showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
+			//showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -127,17 +130,21 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//to check if limit is not exceeded
 			diffPt = actPt - prevPt;
 			if( currDir == 1)
-				diffSum += abs(diffPt.y);
+				diffSum += diffPt.y;
 			if( currDir == 2)
-				diffSum += abs(diffPt.x);
-			SHOW(diffSum);
+				diffSum += diffPt.x;
+			//SHOW(diffSum);
 			//save first considered currently direction as refernece
 			if( currDir == -1 & direction != 0 )
-				currDir = direction;
-
+			{
+				currDir = direction; 
+				cout << ColorFonts::FG_BLUE; SHOW(currDir);
+				cout << ColorFonts::FG_DEFAULT;
+			}
+			//SHOW(direction);
 			//if current direction is not equal to currenly analysed, increase counter value
 			//if is reset value
-			if( direction != currDir )
+			if( abs(direction) != currDir )
 				dirChangeCount++;
 			else
 				dirChangeCount = 0;
@@ -154,12 +161,12 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//if sum of direction changes or whole coordinate change limit is exceeded
 			//then check if line has reached minimum length
 			//is yes it will be further analysed
-			//SHOW(lookInRevDir);
-			if ( dirChangeCount > dirChangeLimit | diffSum > diffSumLimit)
+			//SHOW(dirChangeCount);
+			if ( dirChangeCount > dirChangeLimit | abs(diffSum) > diffSumLimit)
 			{
 				//currDir = -1;
 				diffSum = 0;
-				if( minLineLenReached )
+				if( minLineLenReached & ~lookInRevDir)
 				{
 					lookInRevDir = true;
 					dirChangeCount = -1;
@@ -169,10 +176,10 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					SHOW(lineLength);
 					
 				}
-				else
+				else if (~minLineLenReached)
 				{
 					//if not set -1 and this series will be ommited
-					message = "dir change limit exceeded at length " + to_string(lineLength); 
+					message = "dirChangeLimit exceeded at length " + to_string(lineLength); 
 					SHOW(message);
 					
 					nextPt.x = -1;
@@ -329,15 +336,20 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 2, lookInRevDir );
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
-	if( !lookInRevDir )
+	if( !lookInRevDir /*& nextPt != Point(-1, -1)*/)
 	{
 		//message = "/*Prev to*/ ["+to_string(prevPt.x)+", "+to_string(prevPt.y)+"] coloured red";
-		//SHOW(prevPt);SHOW(actPt);SHOW(nextPt);
+		//SHOW(prevPt);//SHOW(actPt);SHOW(nextPt);
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
 	}
-	else
+	else if(nextPt != Point(-1, -1))
+	{
 		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
-	
+		//SHOW(actPt);
+	}
+	//SHOW("");
+	//showResized(aImgR, "debug window", resizeFactor, 1);
+	//SHOW("_");
 	return nextPt;
 }
 
@@ -555,7 +567,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug //!! VISU
+	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!! VISU
   
   return s;
 	
@@ -582,13 +594,11 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
  
 	if( abs(diffActPrev.x) == 1 && abs(diffNextAct.x) == 1 )
 		if( abs(diffActPrev.y) == 0 | abs(diffNextAct.y) == 0 ) //or until diagonal analysed
-			if(diffActPrev.x > 0)
-				direction = diffActPrev.x; // horizontal
+			direction = diffActPrev.x; // horizontal
 
 	if( abs(diffActPrev.y) == 1 && abs(diffNextAct.y) == 1 )
 		if( abs(diffActPrev.x) == 0 | abs(diffNextAct.x) == 0 ) //or until diagonal analysed
-			if(diffActPrev.y > 0)
-				direction = diffActPrev.y*2; // vertical
+			direction = diffActPrev.y*2; // vertical
 
 	return direction;
 }

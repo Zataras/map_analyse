@@ -29,11 +29,10 @@ void showResized(const Mat &srcImg, const string& winname, double factor, int ti
 {
 	Mat bigImg;
 	//INTER_NEAREST do not fuzz pixels
-	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
+	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);SHOW("");
 
-	//SHOW(message);
-	namedWindow(winname, WINDOW_AUTOSIZE);
-	imshow(winname, bigImg);
-	waitKey(timeMs);
+	namedWindow(winname, WINDOW_AUTOSIZE);SHOW("");
+	imshow(winname, bigImg);SHOW("");
+	waitKey(timeMs);SHOW("");
 }
 

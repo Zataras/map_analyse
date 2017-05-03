@@ -11,6 +11,7 @@ Header file
 #include "opencv2/highgui.hpp"
 #include <ostream>//font colors
 #include <iomanip>//setw?
+#include <iostream>//cout
 
 #define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << "\n";//nice function for debug
 

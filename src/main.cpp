@@ -33,6 +33,9 @@ int main( int argc, char* argv[] )
 	message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
 	SHOW(message);
 
+	//for debug:
+	//namedWindow("debug window", WINDOW_AUTOSIZE);
+
 	Mat auxRgbMap = srcRgbImg.clone();
 	Mat srcRgbImgCloned = srcRgbImg.clone();
 	
