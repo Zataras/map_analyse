@@ -10,7 +10,7 @@ int main( int argc, char* argv[] )
 {
 	//cout << "Press 'c' key to continue";
 	
-	int minLenght = 35; 
+    //int minLenght = 35;
 	string message;
 	/// Load an image
 	if (argc < 1) {
