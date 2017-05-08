@@ -175,4 +175,6 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 7fc4237f8000-7fc4237f9000 rw-p 0000b000 fd:00 532513                     /usr/lib64/libnss_files-2.24.so
 7fc4237f9000-7fc4237ff000 rw-p 00000000 00:00 0
 7fc4237ff000-7fc423800000 ---p 00000000 00:00 0
-7fc423800000-7fc424000000 rw-p 00000000 00:00 */
+7fc423800000-7fc424000000 rw-p 00000000 00:00
+final SDTDEV = 2.7px
+*/

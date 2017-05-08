@@ -190,7 +190,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			if( lookInRevDir ) //if accepted to analyse
 			{
-				int otoczenie = 5;
+                int otoczenie = 4; //!! width
 				countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
 			}
 			

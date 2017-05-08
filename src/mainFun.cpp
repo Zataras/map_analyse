@@ -206,7 +206,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			}
 			SHOW("!");
 			//destroyAllWindows();
-			showResized(aRsrcRgbImg, "de", resizeFactor, 10); //debug VISU 
+            showResized(aRsrcRgbImg, "debug straight", resizeFactor, 0); //debug VISU
 		}
 	}
 	
