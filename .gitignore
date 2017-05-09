@@ -4,6 +4,4 @@ old/
 build/**
 #QT creator files:
 CMakeLists.txt.user
-cmake-Debug-x86_64-gnu-linux/
-cmake-Default-x86_64-gnu-linux/
-
+cmake-*-linux/

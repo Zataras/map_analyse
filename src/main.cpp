@@ -33,9 +33,6 @@ int main( int argc, char* argv[] )
 	message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
 	SHOW(message);
 
-	//for debug:
-	//namedWindow("debug window", WINDOW_AUTOSIZE);
-
 	Mat auxRgbMap = srcRgbImg.clone();
 	Mat srcRgbImgCloned = srcRgbImg.clone();
 	
@@ -71,7 +68,7 @@ int main( int argc, char* argv[] )
 	Point startPt, endPt;
 	SHOW(VecOfMeanPts.size());
 	Vec2f sumStdDevVsCount;
-    for(int i=0; i<static_cast<int>(VecOfMeanPts.size()); i++)
+	for(int i=0; i<VecOfMeanPts.size(); i++)
 	{
 		SHOW("");
 		startPt =  static_cast<Point>(*(VecOfMeanPts[i].meanPt.begin()));
@@ -91,8 +88,8 @@ int main( int argc, char* argv[] )
 		}
 		else if(VecOfMeanPts[i].direction == 2)
 		{
-            startPt.x = static_cast<int>(vecOfMeanVals[i][0]);
-            endPt.x   = static_cast<int>(vecOfMeanVals[i][0]);
+			startPt.x = vecOfMeanVals[i][0];
+			endPt.x   = vecOfMeanVals[i][0];
 			//check if end greater than begin
 			if(startPt.y > endPt.y)
 			{
@@ -148,33 +145,3 @@ void callFunctions(Mat &aRgbMapR, int width, int minLenght)
 	//valuesChange.flip();
 }*/
 
-/*115: message = at the end
-*** Error in `/home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher': free(): invalid next size (normal): 0x0000000001456570 ***
-======= Backtrace: =========
-/lib64/libc.so.6(+0x791fb)[0x7fc4983c61fb]
-/lib64/libc.so.6(+0x8288a)[0x7fc4983cf88a]
-/lib64/libc.so.6(cfree+0x4c)[0x7fc4983d32bc]
-/lib64/libopencv_core.so.3.1(_ZNK2cv12MatAllocator5unmapEPNS_8UMatDataE+0x99)[0x7fc4990eda79]
-/lib64/libopencv_core.so.3.1(_ZN2cv3Mat10deallocateEv+0x1c)[0x7fc4990ee65c]
-/home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher(_ZN2cv3Mat7releaseEv+0x4f)[0x40b1b7]
-/home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher(_ZN2cv3MatD1Ev+0x18)[0x40b0be]
-/lib64/libc.so.6(+0x3a410)[0x7fc498387410]
-/lib64/libc.so.6(+0x3a46a)[0x7fc49838746a]
-/lib64/libc.so.6(__libc_start_main+0xf8)[0x7fc49836d408]
-/home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher(_start+0x2a)[0x409baa]
-======= Memory map: ========
-00400000-00417000 r-xp 00000000 fd:02 15862347                           /home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher
-00616000-00617000 r--p 00016000 fd:02 15862347                           /home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher
-00617000-00618000 rw-p 00017000 fd:02 15862347                           /home/mitat/mag/map_analyse/cmake-Debug-x86_64-gnu-linux/launcher
-010cb000-01d79000 rw-p 00000000 00:00 0                                  [heap]
-7fc41c000000-7fc41c021000 rw-p 00000000 00:00 0
-7fc41c021000-7fc420000000 ---p 00000000 00:00 0
-7fc4235ed000-7fc4235f7000 r-xp 00000000 fd:00 532513                     /usr/lib64/libnss_files-2.24.so
-7fc4235f7000-7fc4237f7000 ---p 0000a000 fd:00 532513                     /usr/lib64/libnss_files-2.24.so
-7fc4237f7000-7fc4237f8000 r--p 0000a000 fd:00 532513                     /usr/lib64/libnss_files-2.24.so
-7fc4237f8000-7fc4237f9000 rw-p 0000b000 fd:00 532513                     /usr/lib64/libnss_files-2.24.so
-7fc4237f9000-7fc4237ff000 rw-p 00000000 00:00 0
-7fc4237ff000-7fc423800000 ---p 00000000 00:00 0
-7fc423800000-7fc424000000 rw-p 00000000 00:00
-final SDTDEV = 2.7px
-*/

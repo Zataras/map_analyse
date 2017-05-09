@@ -140,7 +140,9 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				sum += VecOfMeanPts[i].meanPt[j]; //can divide here?
 				counter++;
 			}
+		
 		}
+
 		if(counter)
 		{
 			sum = sum / counter;
@@ -163,8 +165,8 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 			//SHOW("");
 			Vec2f vBegin = *(VecOfMeanPts[i].meanPt.begin()), vEnd = *(VecOfMeanPts[i].meanPt.rbegin()); 
 			//SHOW("");
-			SHOW(vBegin);
-			SHOW(vEnd);
+			//SHOW(vBegin);
+			//SHOW(vEnd);
 			int jBegin, jEnd;
 			if(abs(VecOfMeanPts[i].direction == 1))
 			{
