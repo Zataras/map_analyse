@@ -1,0 +1,11 @@
+local/
+old/
+#CMake files:
+build/**
+<<<<<<< HEAD
+CMakeLists.txt.user
+=======
+#QT creator files:
+CMakeLists.txt.user
+cmake-*-linux/
+>>>>>>> df4ea03d5ee93f13e40fd2137596bed08b08e871
