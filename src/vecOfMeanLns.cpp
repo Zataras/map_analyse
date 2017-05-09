@@ -328,7 +328,8 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 }
 
 //szuka kolejnego pixela nalezącego do konturu
-Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir){
+Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir)
+{
 	Point nextPt(-1,-1);
 
 	//cout << "In findNextPixelEdge" << endl;
@@ -344,6 +345,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	else if(nextPt != Point(-1, -1))
 	{
 		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
+    }
 	
 	return nextPt;
 }
