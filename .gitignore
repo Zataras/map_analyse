@@ -1,3 +1,4 @@
 local/
 old/
 build/**
+CMakeLists.txt.user
