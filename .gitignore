@@ -1,4 +1,7 @@
 local/
 old/
+#CMake files:
 build/**
+#QT creator files:
 CMakeLists.txt.user
+cmake-*-linux/

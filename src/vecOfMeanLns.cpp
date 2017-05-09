@@ -103,8 +103,9 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 					//prevPt = tempPt;
 				}			
 			}
-			
+			//message = "before";SHOW(message);
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
+			//message = "after";SHOW(message);
 			if(nextPt.x == -1 & ~minLineLenReached)
 			{
 				message = "next Pixel on Edge not found";
@@ -128,9 +129,9 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//to check if limit is not exceeded
 			diffPt = actPt - prevPt;
 			if( currDir == 1)
-				diffSum += diffPt.y;
+				diffSum += abs(diffPt.y);
 			if( currDir == 2)
-				diffSum += diffPt.x;
+				diffSum += abs(diffPt.x);
 			SHOW(diffSum);
 			//save first considered currently direction as refernece
 			if( currDir == -1 & direction != 0 )
@@ -159,7 +160,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//if sum of direction changes or whole coordinate change limit is exceeded
 			//then check if line has reached minimum length
 			//is yes it will be further analysed
-			SHOW(dirChangeCount);
+			//SHOW(dirChangeCount);
 			if ( dirChangeCount > dirChangeLimit | abs(diffSum) > diffSumLimit)
 			{
 				//currDir = -1;
@@ -188,7 +189,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			if( lookInRevDir ) //if accepted to analyse
 			{
-				int otoczenie = 5;
+                		int otoczenie = 4; //!! width
 				countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
 			}
 			
@@ -243,7 +244,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 	while((pt.x < (aImgR.cols) | pt.y < (aImgR.rows)) && stop == false){
 		while(pt.x < (aImgR.cols) && stop == false){
 			Vec3b pxColour = aImgR.at<Vec3b>(pt);
-			SHOW(pt);
+			//SHOW(pt);
 			if( pxColour == aColour)
 			{
 				stop = true;
@@ -334,16 +335,16 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 2, lookInRevDir );
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
-	if( !lookInRevDir )
+	if( !lookInRevDir /*& nextPt != Point(-1, -1)*/)
 	{
 		//message = "/*Prev to*/ ["+to_string(prevPt.x)+", "+to_string(prevPt.y)+"] coloured red";
 		//SHOW(prevPt);SHOW(actPt);SHOW(nextPt);
 		aImgR.at<Vec3b>(prevPt) = COLORS.red; //for debug
 	}
-	else
+	else if(nextPt != Point(-1, -1))
+	{
 		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
 	
-	showResized(aImgR, "debug window", resizeFactor, 1);
 	return nextPt;
 }
 
@@ -561,7 +562,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 1); //debug //!! VISU
+	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug //!! VISU
   
   return s;
 	
