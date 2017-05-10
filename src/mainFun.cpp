@@ -85,7 +85,7 @@ float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 		}
 		if(currDir == 2)
 		{
-			for(int i = 1; i<=width; i++){
+            for(int i = 1; i<=width; i++){
 				if( currPt.x + i < srcImg.cols ){
 					currPtMod.x = currPt.x + i;
 					currPtMod.y = currPt.y;
@@ -127,11 +127,11 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 {
 	//vector<Vec2f> vecOfMeanVals;
 	Vec2f mean;
-	for(int i=0; i<VecOfMeanPts.size(); i++)
+    for(unsigned int i=0; i<VecOfMeanPts.size(); i++)
 	{
 		Vec2f sum = Vec2f(0,0);
 		int counter = 0;
-		for(int j=0; j<VecOfMeanPts[i].meanPt.size(); j++)
+        for(unsigned int j=0; j<VecOfMeanPts[i].meanPt.size(); j++)
 		{
 			cout << "VecOfMeanPts["<<i<<"].";
 			cout <<"["<<j<<"] = ("<<VecOfMeanPts[i].meanPt[j]<<"); dir = "<<VecOfMeanPts[i].direction<< "\n";
@@ -150,13 +150,13 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 		}
 	}
 	//vecOfMeanVals.shrink_to_fit();
-	for(int j=0; j<vecOfMeanVals.size(); j++)
+    for(unsigned int j=0; j<vecOfMeanVals.size(); j++)
 	{
 		cout << "vecOfMeanVals["<<j<<"]";
 		cout <<" = ("<<vecOfMeanVals[j]<<")\n";			
 	}
 	//draw mean lines
-	for(int i=0; i<VecOfMeanPts.size(); i++)
+    for(unsigned int i=0; i<VecOfMeanPts.size(); i++)
 	{
 		SHOW("");
 		if(!VecOfMeanPts[i].meanPt.empty())
@@ -201,7 +201,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 					ptToDraw.y = j;
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-				showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 0); //debug VISU 
+                showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 10); //debug VISU
 			}
 		}
 	}

@@ -13,6 +13,7 @@ Header file
 #include <iomanip>//setw?
 #include <iostream>//cout
 
+//! bla
 #define SHOW(obj) cout << setw(3) << setfill('0') << __LINE__ << ": " << #obj << " = " << (obj) << "\n";//nice function for debug
 
 using namespace cv;

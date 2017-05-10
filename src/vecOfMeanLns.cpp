@@ -36,10 +36,10 @@ namespace ColorFonts {
     }
 }
 
-void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
+void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 {
 	//---------------------------------some variables--------------------------------------
-	Point pt(0,0), diffPt;
+    Point pt(0, 0), diffPt;
 	bool minLineLenReached, lookInRevDir;
 	int lineLength, direction, currDir, diffSum, dirChangeCount, reachedLen, linesCounter;
 	int diffSumLimit = 3; //limit for change of whole coordinate
@@ -53,7 +53,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 	VecOfMeanPts.push_back(vecOfVec2f);
 	
 	//----------------------loop until reaches map's last pixel-----------------------------
-	while((pt.x  < (aSrcRgbImgR.cols) | pt.y < (aSrcRgbImgR.rows)) && !allAnalysed)
+    while((pt.x  < (aSrcRgbImgR.cols -1) | pt.y < (aSrcRgbImgR.rows -1)) & !allAnalysed)
 	{	
 		//counting any line
 		linesCounter++;
@@ -71,7 +71,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		//VecOfMeanPts.push_back(vecOfVec2f);//problem - adding also when line not accepted
 		//SHOW(" ");		
 		//------Looking for any black pixel to start with-----
-		pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
+        pt = lookForSpecColPxls(aAuxRgbMap, pt, COLORS.black);
 		//SHOW(pt);
 		if(pt.x == -1)
 		{
@@ -80,16 +80,16 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 		}
 		//----------initializing points------------
 		Point nextPt = pt, actPt = pt, prevPt = pt;
-		
+
 		if(*(VecOfMeanPts.rbegin()) != vecOfVec2f)
 			VecOfMeanPts.push_back(vecOfVec2f);
-		
+
 		//===while there is still any not analysed pixel in current series===
 		while( nextPt.x != -1 )
 		{
 			
 			//update points values
-			if( !lookInRevDir | lineLength != 0 )
+            if( !lookInRevDir | (lineLength != 0) )
 			{
 				prevPt = actPt;
 				actPt = nextPt;
@@ -106,12 +106,12 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//message = "before";SHOW(message);
 			nextPt = findNextPixelEdge(aAuxRgbMap, prevPt, actPt, lookInRevDir);
 			//message = "after";SHOW(message);
-			if(nextPt.x == -1 & ~minLineLenReached)
+            if((nextPt.x == -1) & ~minLineLenReached)
 			{
 				message = "next Pixel on Edge not found";
 				SHOW(message); 
 			}
-			/*if(nextPt.x == -1 && lineLength == 0)
+            /*if(nextPt.x == -1 & lineLength == 0)
 			{
 				
 			}*/
@@ -150,7 +150,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			//SHOW(minLineLenReached);
 			//set true if reached
-			if(lineLength > lineLenghtMin & (~lookInRevDir) & (~minLineLenReached))
+            if((lineLength > lineLenghtMin) & (~lookInRevDir) & (~minLineLenReached))
 			{
 				minLineLenReached = true;
 				cout << __LINE__ << ": Line accepted" << endl;
@@ -189,8 +189,8 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			if( lookInRevDir ) //if accepted to analyse
 			{
-                		int otoczenie = 4; //!! width
-				countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, actPt, otoczenie, currDir);
+                int otoczenie = 4; //!! width
+                countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, otoczenie, currDir);
 			}
 			
 			//if next point not found
@@ -222,7 +222,7 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 			//If going backwards measured forward length is reached then finish analying this series.
 			//Maybe it's bad idea? maybe should follow until doesn't fit previous condiditons
 			//like sum of direction changes or whole coordinate change limit is exceed 
-			/*if( lookInRevDir && (lineLength >= (reachedLen - 2)) )
+            /*if( lookInRevDir & (lineLength >= (reachedLen - 2)) )
 			{
 				nextPt.x = -1;
 				ileDlugich++;
@@ -238,12 +238,13 @@ void createVecOfMeanLines(Mat &aSrcRgbImgR, Mat &aAuxRgbMap)
 //idea for variable naming convention: [Argument/Local/Static][name][Reference, Pointer]
 Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 {
+    Point maxSize(aImgR.cols - 1, aImgR.rows - 1 );
 	bool stop = false;
 	Point pt = aPt;
-	
-	while((pt.x < (aImgR.cols) | pt.y < (aImgR.rows)) && stop == false){
-		while(pt.x < (aImgR.cols) && stop == false){
-			Vec3b pxColour = aImgR.at<Vec3b>(pt);
+    Vec3b pxColour;
+    while((pt.x < maxSize.x | pt.y < maxSize.y) & (stop == false)){
+        while(pt.x < maxSize.x & stop == false){
+            pxColour = aImgR.at<Vec3b>(pt);
 			//SHOW(pt);
 			if( pxColour == aColour)
 			{
@@ -254,7 +255,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 			if( !stop )			
 				pt.x++;
 		}
-  		if( !stop && ((pt.y ) < (aImgR.rows)) )
+        if( !stop & ((pt.y ) < maxSize.y) )
   		{		
 			pt.x = 0;
 			pt.y++;
@@ -274,7 +275,7 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 	static bool prevRevDir;
 	Vec3b wantedColor;	
 	Point foundPt( -1, -1 ), modPt; 
-	if(lookInRevDir | prevRevDir != lookInRevDir)
+    if(lookInRevDir | (prevRevDir != lookInRevDir))
 		wantedColor = COLORS.red;
 	else
 		wantedColor = COLORS.black;
@@ -282,13 +283,13 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 	int direction;
 
 	int rad = 1;
-	while( rad <= maxGap && !found )//every loop increases radius
+    while( rad <= maxGap & !found )//every loop increases radius
 	{	
 		int mG = 1;
-		while( mG <= ( maxGap + 1 ) && !found )//every loop cheks lower priority pixels
+        while( mG <= ( maxGap + 1 ) & !found )//every loop cheks lower priority pixels
 		{
 			direction = 1;
-			while ( direction <= 4 && !found )
+            while ( direction <= 4 & !found )
 			{
 				switch( direction )
 				{
@@ -308,10 +309,10 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				//added black always to allow on rev to analize longer series
 				//SHOW(modPt);
-				if(modPt.x < srcImg.cols && modPt.y < srcImg.rows)
+                if(modPt.x < srcImg.cols & modPt.y < srcImg.rows)
 				{
 					//SHOW(modPt);
-					if(srcImg.at<Vec3b>(modPt) == wantedColor /*| srcImg.at<Vec3b>(modPt) == COLORS.black)*/ & (modPt != prevPt | prevRevDir != lookInRevDir))
+                    if((srcImg.at<Vec3b>(modPt) == wantedColor) /*| srcImg.at<Vec3b>(modPt) == COLORS.black)*/ & (modPt != prevPt | (prevRevDir != lookInRevDir)))
 					{	
 						foundPt = modPt;
 						found = true;
@@ -352,7 +353,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 
 //to check if found point is not neigbour to previous point(and previous point itself)
 //returns true if is not
-bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
+bool checkIfNotNeighbour( Point refPt, Point checkPt )
 {
 	bool retVal = false;
 	Point diffPt = refPt - checkPt;
@@ -363,43 +364,27 @@ bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt )
 	return retVal;
 }
 
-Point countTrueMeanInt(Mat &aSrcRgbImgR, Mat &aImgRgbEdgeR,/*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth)
+Point countTrueMeanInt(Mat &aSrcRgbImgR, Point PrevPtMod, int &counterAllOut)
 {
-	//static Mat clonedSrcRgbImg = aSrcRgbImgR.clone();
-	//SHOW(PrevPtMod);
-	//cout << ColorFonts::FG_BLUE << "   :Checking above point in countTrueMeanInt. Its colour is ";
-	//cout << aSrcRgbImgR.at<Vec3b>(PrevPtMod) << ColorFonts::FG_DEFAULT << endl;
-	
 	++counterAllOut;
-	//waitKey(0);
-	
 	if(aSrcRgbImgR.at<Vec3b>(PrevPtMod) == COLORS.black )
 	{
-
-		//string message = "Coloured yellow";
-		//SHOW(message);
-		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.yellow; //zaznacza na zolty uwzglednione pixelec
-		//aImgRgbEdgeR.at<Vec3b>(PrevPtMod) = COLORS.yellow;
 		return PrevPtMod;
 	}
 	else 
 		return Point(-1, -1);
-	
-	
-	
 }
 
 
 
-float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt/*NU*/, int &width, int currDir)
+float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, int &width, int currDir)
 {
 	int counterAll = 0, counterAllEdge = 0, counterAllOut = 0;
 	int counterFound = 0, counterFoundEdge = 0, counterFoundOut = 0;
-	uchar black = 0;
 	//Point diffPt;
 	
 	cout << __LINE__ << ": In countTrueMean with dir " << currDir << endl;
-	
+
 	int pointsArraySize = width * 2 + 1;
 	Point pointsArray[pointsArraySize]; //create array to keep checked points's values
 	fill_n( pointsArray, pointsArraySize, Point(-1, -1) );//jednak sie przyda, bo nie zawsze uda sie ją później
@@ -430,7 +415,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y + i;
 				//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+                pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, PrevPtMod, counterAllOut);
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				
@@ -440,7 +425,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 				PrevPtMod.x = prevPt.x;
 				PrevPtMod.y = prevPt.y - i;
 				//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-				pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+                pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, PrevPtMod, counterAllOut);
 				aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 				
@@ -457,7 +442,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 					PrevPtMod.x = prevPt.x + i;
 					PrevPtMod.y = prevPt.y;
 					//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-					pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+                    pointsArray[i] = countTrueMeanInt(aSrcRgbImgR, PrevPtMod, counterAllOut);
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					
@@ -466,7 +451,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 					PrevPtMod.x = prevPt.x - i;
 					PrevPtMod.y = prevPt.y;
 					//cout << ColorFonts::FG_DARK_GRAY; SHOW(""); cout << ColorFonts::FG_DEFAULT;
-					pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, aRgbEdgeMapR, pointsArraySize, PrevPtMod, counterAllOut, i, maxWidth);
+                    pointsArray[pointsArraySize / 2 + i] = countTrueMeanInt(aSrcRgbImgR, PrevPtMod, counterAllOut);
 					aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.blue;
 					
@@ -546,7 +531,6 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 	counterFound = counterFoundEdge + counterFoundOut;
 	int percentValue = 0;
 
-	int pxCounter = counterFoundOut;
 	//Pierwiastek estymatora nieobciążonego wariancji:
 	//s to wartosc odchylenia, sumSqrXi to suma kwaratów odchyleń pixeli
 	//zakładam że śrendnia wypada zawsze w 0
@@ -564,7 +548,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &a
 
 	width = maxWidth;
 
-	showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug //!! VISU
+    //showResized(aRgbEdgeMapR, "debug window", resizeFactor, 0); //debug //!! VISU
   
   return s;
 	
@@ -589,11 +573,11 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 	
 	//cout << __LINE__ << ": diffs are: " << diffActPrev << diffNextAct << endl;
  
-	if( abs(diffActPrev.x) == 1 && abs(diffNextAct.x) == 1 )
+    if( abs(diffActPrev.x) == 1 & abs(diffNextAct.x) == 1 )
 		if( abs(diffActPrev.y) == 0 | abs(diffNextAct.y) == 0 ) //or until diagonal analysed
 			direction = diffActPrev.x; // horizontal
 
-	if( abs(diffActPrev.y) == 1 && abs(diffNextAct.y) == 1 )
+    if( abs(diffActPrev.y) == 1 & abs(diffNextAct.y) == 1 )
 		if( abs(diffActPrev.x) == 0 | abs(diffNextAct.x) == 0 ) //or until diagonal analysed
 			direction = diffActPrev.y*2; // vertical
 

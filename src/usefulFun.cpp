@@ -24,10 +24,11 @@ string type2str(int type) {
 
   return r;
 }
-
+//! bla2
 void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs)
 {
-	Mat bigImg;
+    int rows = srcImg.rows*factor;
+    Mat bigImg(rows,srcImg.cols, CV_8UC3, Scalar(0,0,0));
 	//INTER_NEAREST do not fuzz pixels
 	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);SHOW("");
 

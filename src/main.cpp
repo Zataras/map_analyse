@@ -8,110 +8,119 @@ Aim of this project is to define accuracy and recurrence of used mapping method
 /** @function main */
 int main( int argc, char* argv[] )
 {
-	//cout << "Press 'c' key to continue";
-	
-    //int minLenght = 35;
 	string message;
 	/// Load an image
-	if (argc < 1) {
-		cout << "Name of image not specified";
-      return -1;
-   }
- 	Mat srcRgbImg = imread( argv[1] );
+    if (argc < 1)
+    {
+        cout << "Name of image not specified";
+        return -1;
+    }
+    // Mat objects life block
+    {
+        Mat srcRgbImg = imread( argv[1] );
 
-  	if( !srcRgbImg.data )
-  		return -1;
+        showResized(srcRgbImg, "srcRgbImg", resizeFactor, 0); //debug
+        destroyAllWindows();
 
-	int width = 6;
-	if( argc > 2 )
-	{
-		width = atoi(argv[2]);
-		cout << "width = " << width << endl;
-	}
+        if( !srcRgbImg.data )
+            return -1;
 
-	string ty =  type2str( srcRgbImg.type() );
-	message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
-	SHOW(message);
+        int width = 6;
+        if( argc > 2 )
+        {
+            width = atoi(argv[2]);
+            cout << "width = " << width << endl;
+        }
 
-	Mat auxRgbMap = srcRgbImg.clone();
-	Mat srcRgbImgCloned = srcRgbImg.clone();
-	
-	//Gray pixels to black:
-	colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
+        string ty =  type2str( srcRgbImg.type() );
+        message = "Matrix: " + ty + " " + to_string(srcRgbImg.cols) + "x" + to_string(srcRgbImg.rows);
+        SHOW(message);
 
-	int blur_out = 3;
-	lowThreshold = 70;
-	
-	auxRgbMap.copyTo(edgesRgbMap);
+        Mat auxRgbMap = srcRgbImg.clone();
+        //showResized(auxRgbMap, "auxRgbMap", resizeFactor, 0); //debug
 
-	medianBlur ( auxRgbMap, auxRgbMap, blur_out );
-	Mat greyMap;
-	cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
-	Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
+        //Gray pixels to black:
+        colorChangeAllRgb(auxRgbMap, COLORS.black, COLORS.grey);
+
+        int blur_out = 3;
+        lowThreshold = 70;
+
+        auxRgbMap.copyTo(edgesRgbMap);
+
+        medianBlur ( auxRgbMap, auxRgbMap, blur_out );
+        Mat greyMap;
+        cvtColor(auxRgbMap, greyMap, CV_RGB2GRAY);
+        Canny( greyMap, edgesRgbMap, lowThreshold, lowThreshold*ratio, kernel_size );
+
+        //that map will be compared with oryginal
+        bitwise_not ( edgesRgbMap, edgesRgbMap );
+        cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
+
+        /*namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
+        setMouseCallback("debug window", onMouse, NULL);*/ //CHECK POINT COORD.
+
+        createVecOfMeanLines(srcRgbImg, edgesRgbMap);
+
+        //remove last element of VecOfMeanPts
+        //because it's being added "in case"
+        VecOfMeanPts.pop_back();
+
+        countAndDrawMeanLines(srcRgbImg);
+
+        message = "after draw";
+        SHOW(message);
+        Point startPt, endPt;
+        SHOW(VecOfMeanPts.size());
+        Vec2f sumStdDevVsCount;
+
+        for(unsigned int i=0; i<VecOfMeanPts.size(); i++)
+        {
+            SHOW("");
+            startPt =  static_cast<Point>(*(VecOfMeanPts[i].meanPt.begin()));
+            endPt = static_cast<Point>(*(VecOfMeanPts[i].meanPt.rbegin()));
+            //write mean value
+            if(VecOfMeanPts[i].direction == 1)
+            {
+                startPt.y = vecOfMeanVals[i][1];
+                endPt.y   = vecOfMeanVals[i][1];
+                //check if end greater than begin
+                if(startPt.x > endPt.x)
+                {
+                    int temp = startPt.x;
+                    startPt.x = endPt.x;
+                    endPt.x 	 = temp;
+                }
+            }
+            else if(VecOfMeanPts[i].direction == 2)
+            {
+                startPt.x = vecOfMeanVals[i][0];
+                endPt.x   = vecOfMeanVals[i][0];
+                //check if end greater than begin
+                if(startPt.y > endPt.y)
+                {
+                    int temp = startPt.y;
+                    startPt.y = endPt.y;
+                    endPt.y 	 = temp;
+                }
+            }
+
+            float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
+            SHOW(stdDev);
+            sumStdDevVsCount[0] += stdDev;
+            sumStdDevVsCount[1]++;
+        }
+        float finalStdDev = sumStdDevVsCount[0] / sumStdDevVsCount[1];
+        SHOW(finalStdDev);
+
+    }
+
 	
-	//that map will be compared with oryginal
-	bitwise_not ( edgesRgbMap, edgesRgbMap );
-	cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
-	
-	namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
-	setMouseCallback("debug window", onMouse, NULL);
-	
-	createVecOfMeanLines(srcRgbImgCloned, edgesRgbMap);
-	
-	//remove last element of VecOfMeanPts
-	//because it's being added "in case"
-	VecOfMeanPts.pop_back();
-	
-	countAndDrawMeanLines(srcRgbImg);
-	message = "after draw";
-	SHOW(message);
-	Point startPt, endPt;
-	SHOW(VecOfMeanPts.size());
-	Vec2f sumStdDevVsCount;
-	for(int i=0; i<VecOfMeanPts.size(); i++)
-	{
-		SHOW("");
-		startPt =  static_cast<Point>(*(VecOfMeanPts[i].meanPt.begin()));
-		endPt = static_cast<Point>(*(VecOfMeanPts[i].meanPt.rbegin()));
-		//write mean value
-		if(VecOfMeanPts[i].direction == 1)
-		{
-			startPt.y = vecOfMeanVals[i][1];
-			endPt.y   = vecOfMeanVals[i][1];
-			//check if end greater than begin
-			if(startPt.x > endPt.x)
-			{
-				int temp = startPt.x;
-				startPt.x = endPt.x;
-				endPt.x 	 = temp;
-			}
-		}
-		else if(VecOfMeanPts[i].direction == 2)
-		{
-			startPt.x = vecOfMeanVals[i][0];
-			endPt.x   = vecOfMeanVals[i][0];
-			//check if end greater than begin
-			if(startPt.y > endPt.y)
-			{
-				int temp = startPt.y;
-				startPt.y = endPt.y;
-				endPt.y 	 = temp;
-			}
-		}
-		
-		float stdDev = countStdDev(srcRgbImg, 10, startPt, endPt);
-		SHOW(stdDev);
-		sumStdDevVsCount[0] += stdDev;
-		sumStdDevVsCount[1]++;
-	}
-	float finalStdDev = sumStdDevVsCount[0] / sumStdDevVsCount[1];
-	
-	SHOW(finalStdDev);
+
 	
 	message = "at the end";
 	SHOW(message);//debug
 	
-	destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
+    //destroyAllWindows(); //For a simple program, you do not really have to call these functions because all the resources and windows of the application are closed automatically by the operating system upon exit.
   	return 0;
 }
 

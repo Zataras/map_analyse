@@ -42,7 +42,7 @@ extern double resizeFactor;
 extern Mat edgesRgbMap;
 
 //Takes pixels similar to lines and counts mean of them and draw at auxRgbMap
-void createVecOfMeanLines(Mat &srcRgbImgR, Mat &auxRgbMap);
+void createVecOfMeanLines(Mat srcRgbImgR, Mat &auxRgbMap);
 
 //idea for variable naming convention: [Const][Argument/Local/Static][name][Reference, Pointer]
 //function returns coordinates of first pixel found in specified color on specified image
@@ -51,7 +51,7 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour);
 
 //to check if found point is not neigbour to previous point(and previous point itself)
 //returns true if is not
-bool checkIfNotNeighbour( const Mat &srcImg, Point refPt, Point checkPt );//not used??
+bool checkIfNotNeighbour( Point refPt, Point checkPt );//not used??
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
 //looks in 4 directions, returns found point
@@ -61,10 +61,9 @@ Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bo
 //looking for next pixel on edge, returns its coordinates
 Point findNextPixelEdge(Mat &srcImg, Point prevPt, Point actPt, bool lookInRevDir);
 
+Point countTrueMeanInt(Mat &pixImg, Point PrevPtMod, int &counterAllOut);
 
-Point countTrueMeanInt(Mat &pixImg, Mat &aImgRgbEdgeR, /*Point (&pointsArray)[],*/ int pointsArraySize, Point PrevPtMod, int &counterAllOut, /*bool fOrS,*/ int currWidth, int &maxWidth);
-
-float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, Point &actPt, int &width, int currDir);
+float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, int &width, int currDir);
 //=======================countTrueMean END=================================
 
 //if previous, actual and next points difference points that they
@@ -90,6 +89,5 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt);
 	rows = s.height;
 	cols = s.width;
 	*/
-
 
 #endif /* !FILE_STRLINES_SEEN */
