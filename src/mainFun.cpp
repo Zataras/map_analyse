@@ -158,7 +158,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 	//draw mean lines
     for(unsigned int i=0; i<VecOfMeanPts.size(); i++)
 	{
-		SHOW("");
+        //SHOW("");
 		if(!VecOfMeanPts[i].meanPt.empty())
 		{
 			Point ptToDraw(-1,-1);
@@ -185,11 +185,11 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 				jBegin = jEnd;
 				jEnd 	 = jTemp;
 			}
-			SHOW(i);
+            //SHOW(i);
 			for(int j=jBegin; j<=jEnd; j++)
 			{
 				//SHOW(j);
-				//check directions
+                //check directions
 				if(abs(VecOfMeanPts[i].direction) == 1)
 				{	
 					ptToDraw.x = j;

@@ -27,13 +27,13 @@ string type2str(int type) {
 //! bla2
 void showResized(const Mat &srcImg, const string& winname, double factor, int timeMs)
 {
-    int rows = srcImg.rows*factor;
-    Mat bigImg(rows,srcImg.cols, CV_8UC3, Scalar(0,0,0));
+    //int rows = srcImg.rows*factor;
+    Mat bigImg;//(rows,srcImg.cols, CV_8UC3, Scalar(0,0,0));
 	//INTER_NEAREST do not fuzz pixels
-	resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);SHOW("");
+    resize(srcImg, bigImg, Size(), factor, factor, INTER_NEAREST);
 
-	namedWindow(winname, WINDOW_AUTOSIZE);SHOW("");
-	imshow(winname, bigImg);SHOW("");
-	waitKey(timeMs);SHOW("");
+    namedWindow(winname, WINDOW_AUTOSIZE);
+    imshow(winname, bigImg);
+    waitKey(timeMs);
 }
 

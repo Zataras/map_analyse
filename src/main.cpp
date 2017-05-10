@@ -19,8 +19,10 @@ int main( int argc, char* argv[] )
     {
         Mat srcRgbImg = imread( argv[1] );
 
-        showResized(srcRgbImg, "srcRgbImg", resizeFactor, 0); //debug
-        destroyAllWindows();
+        namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
+        setMouseCallback("debug window", onMouse, NULL); //CHECK POINT COORD.
+        showResized(srcRgbImg, "auxRgbMap", resizeFactor, 10); //debug
+        //destroyAllWindows();
 
         if( !srcRgbImg.data )
             return -1;
@@ -55,9 +57,6 @@ int main( int argc, char* argv[] )
         //that map will be compared with oryginal
         bitwise_not ( edgesRgbMap, edgesRgbMap );
         cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
-
-        /*namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
-        setMouseCallback("debug window", onMouse, NULL);*/ //CHECK POINT COORD.
 
         createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 

@@ -46,6 +46,7 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 	int lineLenghtMin = 45; 
 	int dirChangeLimit = 4;//limit for changing direction of on pixel after another
 	bool allAnalysed = false;
+    int strCount = 0, strCountRes = 3;
 	structVecOfMeanPts vecOfVec2f;
 	vecOfVec2f.direction = -1;
 	//SHOW(vecOfVec2f.direction);
@@ -108,14 +109,14 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			//message = "after";SHOW(message);
             if((nextPt.x == -1) & ~minLineLenReached)
 			{
-				message = "next Pixel on Edge not found";
+                message = "next Pixel on Edge not found";
 				SHOW(message); 
 			}
             /*if(nextPt.x == -1 & lineLength == 0)
 			{
 				
 			}*/
-			//showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!		
+            showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -127,11 +128,27 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			
 			//count whole coordinate change if direction is opposite to currently analysed
 			//to check if limit is not exceeded
+
 			diffPt = actPt - prevPt;
 			if( currDir == 1)
+            {
 				diffSum += abs(diffPt.y);
+                if(!diffPt.y)
+                    strCount++;
+                else
+                    strCount = 0;
+            }
 			if( currDir == 2)
-				diffSum += abs(diffPt.x);
+            {
+                diffSum += abs(diffPt.x);
+                if(!diffPt.x)
+                    strCount++;
+                else
+                    strCount = 0;
+            }
+            //Reset diffSum if line is straight for more than strCountRes pixels
+            if(strCount >= strCountRes)
+                diffSum = 0;
 			SHOW(diffSum);
 			//save first considered currently direction as refernece
 			if( currDir == -1 & direction != 0 )
@@ -214,8 +231,9 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 				}
 				else
 				{
-					//if not leave -1 and this series will be ommited
-					//SHOW(nextPt.x);
+                    message = "Next point not found!";
+                    SHOW(message);
+                    //showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug //!! VISU
 				}
 			}
 			
@@ -283,13 +301,13 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 	int direction;
 
 	int rad = 1;
-    while( rad <= maxGap & !found )//every loop increases radius
+    while( (rad <= maxGap) & !found )//every loop increases radius
 	{	
 		int mG = 1;
-        while( mG <= ( maxGap + 1 ) & !found )//every loop cheks lower priority pixels
+        while( (mG <= ( maxGap + 1 )) & !found )//every loop cheks lower priority pixels
 		{
 			direction = 1;
-            while ( direction <= 4 & !found )
+            while ( (direction <= 4) & !found )
 			{
 				switch( direction )
 				{
@@ -583,53 +601,3 @@ int checkDirection(Point prevPt, Point actPt, Point nextPt)
 
 	return direction;
 }
-
-/*305: pt = [87, 73]
-305: pt = [88, 73]
-136: pt = [88, 73]
-264: nextPt.x = -1
-127: New cycle
-131: " " =  
-133: " " =  
-305: pt = [88, 73]
-136: pt = [-1, -1]
-139: allAnalysed = 1
-281: message = Out of while loop
-144: " " =  
-==7511== Invalid free() / delete / delete[] / realloc()
-==7511==    at 0x4C29E90: free (vg_replace_malloc.c:473)
-==7511==    by 0x9325E04: free_mem (in /lib/x86_64-linux-gnu/libc-2.19.so)
-==7511==    by 0x9326141: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
-==7511==    by 0x4A236CC: _vgnU_freeres (vg_preloaded.c:63)
-==7511==    by 0x9211AEA: __run_exit_handlers (exit.c:97)
-==7511==    by 0x9211B74: exit (exit.c:104)
-==7511==    by 0x91FBB4B: (below main) (libc-start.c:321)
-==7511==  Address 0xff000009345a40 is not stack'd, malloc'd or (recently) free'd
-==7511== 
-==7511== Invalid free() / delete / delete[] / realloc()
-==7511==    at 0x4C29E90: free (vg_replace_malloc.c:473)
-==7511==    by 0x9325E0D: free_mem (in /lib/x86_64-linux-gnu/libc-2.19.so)
-==7511==    by 0x9326141: __libc_freeres (in /lib/x86_64-linux-gnu/libc-2.19.so)
-==7511==    by 0x4A236CC: _vgnU_freeres (vg_preloaded.c:63)
-==7511==    by 0x9211AEA: __run_exit_handlers (exit.c:97)
-==7511==    by 0x9211B74: exit (exit.c:104)
-==7511==    by 0x91FBB4B: (below main) (libc-start.c:321)
-==7511==  Address 0xff00000014cd1990 is not stack'd, malloc'd or (recently) free'd
-==7511== 
-==7511== 
-==7511== HEAP SUMMARY:
-==7511==     in use at exit: 2,683,369 bytes in 7,616 blocks
-==7511==   total heap usage: 66,465 allocs, 58,851 frees, 878,648,203 bytes allocated
-==7511== 
-==7511== LEAK SUMMARY:
-==7511==    definitely lost: 6 bytes in 1 blocks
-==7511==    indirectly lost: 0 bytes in 0 blocks
-==7511==      possibly lost: 1,969,265 bytes in 323 blocks
-==7511==    still reachable: 635,162 bytes in 6,872 blocks
-==7511==         suppressed: 0 bytes in 0 blocks
-==7511== Rerun with --leak-check=full to see details of leaked memory
-==7511== 
-==7511== For counts of detected and suppressed errors, rerun with: -v
-==7511== Use --track-origins=yes to see where uninitialised values come from
-==7511== ERROR SUMMARY: 570 errors from 7 contexts (suppressed: 0 from 0)*/
-
