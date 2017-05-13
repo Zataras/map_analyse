@@ -115,7 +115,9 @@ float countStdDev(Mat &srcImg, int width, Point startPt, Point endPt)
 		//SHOW(currDir);
 	}while(currPt != endPt);
 	SHOW(devSumVsCounter);
-	float retVal = static_cast<float>(devSumVsCounter.x) / static_cast<float>(devSumVsCounter.y);
+    float retVal = 0.0;
+    if(devSumVsCounter.y > 0)
+        retVal = static_cast<float>(devSumVsCounter.x) / static_cast<float>(devSumVsCounter.y);
 	return retVal;
 }
 
@@ -201,7 +203,7 @@ void countAndDrawMeanLines(Mat &aRsrcRgbImg)
 					ptToDraw.y = j;
 				}
 				aRsrcRgbImg.at<Vec3b>(ptToDraw) = COLORS.orange;
-                showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 10); //debug VISU
+                //showResized(aRsrcRgbImg, "MeanLines", resizeFactor, 10); //debug VISU
 			}
 		}
 	}

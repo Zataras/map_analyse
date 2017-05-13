@@ -62,9 +62,9 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 		lineLength = 0; reachedLen = 0;
 		dirChangeCount = 0; lineLength = 0; diffSum = 0;
 		lookInRevDir = false; minLineLenReached = false;
-		currDir = -1;
+        currDir = 0;
 		//----------------debug-------------------
-		cout << __LINE__ << ": New cycle" <<endl;
+        //cout << __LINE__ << ": New cycle" <<endl;
 		
 		//Add new empty element to VecOfMeanPts for edge which will be found next
 		
@@ -88,7 +88,7 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 		//===while there is still any not analysed pixel in current series===
 		while( nextPt.x != -1 )
 		{
-			
+            showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug //!! VISU
 			//update points values
             if( !lookInRevDir | (lineLength != 0) )
 			{
@@ -109,14 +109,14 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			//message = "after";SHOW(message);
             if((nextPt.x == -1) & ~minLineLenReached)
 			{
-                message = "next Pixel on Edge not found";
-				SHOW(message); 
+                // message = "next Pixel on Edge not found";
+                //SHOW(message);
 			}
             /*if(nextPt.x == -1 & lineLength == 0)
 			{
 				
 			}*/
-            showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!
+            //showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug	!!
 			
 			//cout << __LINE__ << "points are[PAN]: " << prevPt << actPt << nextPt << endl;
 			
@@ -130,7 +130,7 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			//to check if limit is not exceeded
 
 			diffPt = actPt - prevPt;
-			if( currDir == 1)
+            if( abs(currDir) == 1)
             {
 				diffSum += abs(diffPt.y);
                 if(!diffPt.y)
@@ -138,7 +138,7 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
                 else
                     strCount = 0;
             }
-			if( currDir == 2)
+            if( abs(currDir) == 2)
             {
                 diffSum += abs(diffPt.x);
                 if(!diffPt.x)
@@ -149,15 +149,15 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
             //Reset diffSum if line is straight for more than strCountRes pixels
             if(strCount >= strCountRes)
                 diffSum = 0;
-			SHOW(diffSum);
+            //SHOW(diffSum);
 			//save first considered currently direction as refernece
-			if( currDir == -1 & direction != 0 )
+            if( currDir == 0 & direction != 0 )
 			{
 				currDir = direction; 
-				cout << ColorFonts::FG_BLUE; SHOW(currDir);
-				cout << ColorFonts::FG_DEFAULT;
+                /*cout << ColorFonts::FG_BLUE; SHOW(currDir);
+                cout << ColorFonts::FG_DEFAULT;*/
 			}
-			//SHOW(direction);
+            //SHOW(direction);
 			//if current direction is not equal to currenly analysed, increase counter value
 			//if is reset value
 			if( abs(direction) != currDir )
@@ -195,8 +195,8 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 				else if (~minLineLenReached)
 				{
 					//if not set -1 and this series will be ommited
-					message = "dirChangeLimit exceeded at length " + to_string(lineLength); 
-					SHOW(message);
+                    //message = "dirChangeLimit exceeded at length " + to_string(lineLength);
+                    //SHOW(message);
 					
 					nextPt.x = -1;
 					//break;
@@ -207,7 +207,7 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			if( lookInRevDir ) //if accepted to analyse
 			{
                 int otoczenie = 4; //!! width
-                countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, otoczenie, currDir);
+                countTrueMean(aAuxRgbMap, aSrcRgbImgR, prevPt, otoczenie, abs(currDir));
 			}
 			
 			//if next point not found
@@ -231,8 +231,8 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 				}
 				else
 				{
-                    message = "Next point not found!";
-                    SHOW(message);
+                    //message = "Next point not found!";
+                    //SHOW(message);
                     //showResized(aAuxRgbMap, "debug window", resizeFactor, 1); //debug //!! VISU
 				}
 			}
@@ -288,16 +288,12 @@ Point lookForSpecColPxls(Mat &aImgR, Point aPt, Vec3b aColour)
 }
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
-Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bool lookInRevDir )// pt = point
+Point checkSpecDirection( Mat &srcImg, Vec3b wantedColor, Point prevPt, Point actPt, int maxGap, bool lookInRevDir )// pt = point
 {
 	static bool prevRevDir;
-	Vec3b wantedColor;	
 	Point foundPt( -1, -1 ), modPt; 
-    if(lookInRevDir | (prevRevDir != lookInRevDir))
-		wantedColor = COLORS.red;
-	else
-		wantedColor = COLORS.black;
-	bool found = false;
+
+    bool found = false;
 	int direction;
 
 	int rad = 1;
@@ -327,10 +323,9 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 				//cout << __LINE__ << ": at "<< modPt << " found color is "<< srcImg.at<Vec3b>(modPt) << endl;
 				//added black always to allow on rev to analize longer series
 				//SHOW(modPt);
-                if(modPt.x < srcImg.cols & modPt.y < srcImg.rows)
+                if(((modPt.x < srcImg.cols) & (modPt.y < srcImg.rows)) & ((modPt != prevPt) | (prevRevDir != lookInRevDir)))
 				{
-					//SHOW(modPt);
-                    if((srcImg.at<Vec3b>(modPt) == wantedColor) /*| srcImg.at<Vec3b>(modPt) == COLORS.black)*/ & (modPt != prevPt | (prevRevDir != lookInRevDir)))
+                    if((srcImg.at<Vec3b>(modPt) == wantedColor))
 					{	
 						foundPt = modPt;
 						found = true;
@@ -343,6 +338,8 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 		rad++;
 	}
 	prevRevDir = lookInRevDir;
+    if(foundPt == Point(66, 5))
+            SHOW(foundPt);
 	return foundPt;
 }
 
@@ -350,9 +347,24 @@ Point checkSpecDirection( Mat &srcImg, Point prevPt, Point actPt, int maxGap, bo
 Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir)
 {
 	Point nextPt(-1,-1);
-
+    static bool prevRevDir;
 	//cout << "In findNextPixelEdge" << endl;
-	nextPt = checkSpecDirection( aImgR, prevPt, actPt, 2, lookInRevDir );
+    Vec3b wantedColor;
+    if(lookInRevDir | ((prevRevDir == 0) & (lookInRevDir == 1)))
+    {
+        wantedColor = COLORS.red;
+        //wantedColor2 = COLORS.black;
+    }
+    else
+    {
+        wantedColor = COLORS.black;
+        //wantedColor2 = COLORS.black;
+    }
+    nextPt = checkSpecDirection( aImgR, wantedColor, prevPt, actPt, 2, lookInRevDir );
+    if(nextPt == Point(-1,-1))
+    {
+        nextPt = checkSpecDirection( aImgR, COLORS.black, prevPt, actPt, 2, false );
+    }
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
 	if( !lookInRevDir /*& nextPt != Point(-1, -1)*/)
@@ -365,7 +377,8 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
 	{
 		aImgR.at<Vec3b>(prevPt) = COLORS.grey; //for debug
     }
-	
+    showResized(aImgR, "debug window", resizeFactor, 1);
+    prevRevDir = lookInRevDir;
 	return nextPt;
 }
 
@@ -401,7 +414,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, int &wid
 	int counterFound = 0, counterFoundEdge = 0, counterFoundOut = 0;
 	//Point diffPt;
 	
-	cout << __LINE__ << ": In countTrueMean with dir " << currDir << endl;
+    //cout << __LINE__ << ": In countTrueMean with dir " << currDir << endl;
 
 	int pointsArraySize = width * 2 + 1;
 	Point pointsArray[pointsArraySize]; //create array to keep checked points's values
@@ -419,7 +432,7 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, int &wid
 		aRgbEdgeMapR.at<Vec3b>(PrevPtMod) = COLORS.orange;
 		//aSrcRgbImgR.at<Vec3b>(PrevPtMod) = COLORS.orange;
 		string message = "should be colored orange";
-		SHOW(message);
+        //SHOW(message);
 		++counterAllOut;
 	}
 	
@@ -516,15 +529,15 @@ float countTrueMean(Mat &aRgbEdgeMapR, Mat &aSrcRgbImgR, Point &prevPt, int &wid
 	}
 	if(meanCounter) // > 1){
 	{
-		string message = "!!!!!!!!!!!!Mean point is " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
-		SHOW(message);
+        //string message = "!!!!!!!!!!!!Mean point is " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
+        //SHOW(message);
 		//a.at<Vec3b>(meanPt.x, meanPt.y) = COLORS.green;
 		aRgbEdgeMapR.at<Vec3b>(meanPt) = COLORS.pink;//to psuje obliczenia
 	}
 	else
 	{ 
-		string message = "Couldn't count mean at: " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
-		SHOW(message);
+        //string message = "Couldn't count mean at: " + to_string(meanPt.x) + ", " + to_string(meanPt.y);
+        //SHOW(message);
 		//waitKey(0); //!!
 	}
 	

@@ -21,7 +21,7 @@ int main( int argc, char* argv[] )
 
         namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
         setMouseCallback("debug window", onMouse, NULL); //CHECK POINT COORD.
-        showResized(srcRgbImg, "auxRgbMap", resizeFactor, 10); //debug
+        //bshowResized(srcRgbImg, "auxRgbMap", resizeFactor, 10); //debug
         //destroyAllWindows();
 
         if( !srcRgbImg.data )

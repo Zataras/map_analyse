@@ -55,7 +55,7 @@ bool checkIfNotNeighbour( Point refPt, Point checkPt );//not used??
 
 //should help in checking pixels, //direction 1 - x++; 2 - y++; 3 - x--; 4 - y--
 //looks in 4 directions, returns found point
-Point checkSpecDirection( Mat &srcImg, Point actPt, Point prevPt, int maxGap, bool lookInRevDir );
+Point checkSpecDirection( Mat &srcImg, Vec3b wantedColor, Point actPt, Point prevPt, int maxGap, bool lookInRevDir );
 
 //szuka kolejnego pixela nalezącego do konturu
 //looking for next pixel on edge, returns its coordinates
