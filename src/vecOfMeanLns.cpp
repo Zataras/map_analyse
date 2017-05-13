@@ -363,7 +363,7 @@ Point findNextPixelEdge(Mat &aImgR, Point prevPt, Point actPt, bool lookInRevDir
     nextPt = checkSpecDirection( aImgR, wantedColor, prevPt, actPt, 2, lookInRevDir );
     if(nextPt == Point(-1,-1))
     {
-        nextPt = checkSpecDirection( aImgR, COLORS.black, prevPt, actPt, 2, false );
+        nextPt = checkSpecDirection( aImgR, COLORS.black, prevPt, actPt, 2, lookInRevDir);
     }
 	//cout << __LINE__ << ": Next point is " << nextPt << endl;
 
