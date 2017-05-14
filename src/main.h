@@ -28,7 +28,7 @@ vector<structVecOfMeanPts> VecOfMeanPts;
 vector<Vec2f> vecOfMeanVals;
 
 Mat edgesRgbMap; //global temporary to make it avaliable for mouse callback
-double resizeFactor = 4.0; 	//global to change it globaly in whole project from one place
+double resizeFactor = 2.0; 	//global to change it globaly in whole project from one place
 										//when working on different resolutions
 string message;
 

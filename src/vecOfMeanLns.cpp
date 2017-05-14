@@ -126,29 +126,39 @@ void createVecOfMeanLines(Mat aSrcRgbImgR, Mat &aAuxRgbMap)
 			direction = checkDirection( prevPt, actPt, nextPt );
 			//cout << __LINE__ << ": Dir is " << direction << endl;
 			
+            static Point savedPt;
+            //save coodinate after 5 pixels and count diff from this point
+            //if(lineLength == 5)
+            //    savedPt = actPt;
+
 			//count whole coordinate change if direction is opposite to currently analysed
 			//to check if limit is not exceeded
-
-			diffPt = actPt - prevPt;
-            if( abs(currDir) == 1)
+            //if(lineLength<5)
+                diffPt = actPt - prevPt;
+            //else
+            //    diffPt = actPt - savedPt;
+            if(actPt != prevPt)
             {
-				diffSum += abs(diffPt.y);
-                if(!diffPt.y)
-                    strCount++;
-                else
-                    strCount = 0;
-            }
-            if( abs(currDir) == 2)
-            {
-                diffSum += abs(diffPt.x);
-                if(!diffPt.x)
-                    strCount++;
-                else
-                    strCount = 0;
+                if( abs(currDir) == 1)
+                {
+                    diffSum += diffPt.y;
+                    if(!diffPt.y)
+                        strCount++;
+                    else
+                        strCount = 0;
+                }
+                if( abs(currDir) == 2)
+                {
+                    diffSum += diffPt.x;
+                    if(!diffPt.x)
+                        strCount++;
+                    else
+                        strCount = 0;
+                }
             }
             //Reset diffSum if line is straight for more than strCountRes pixels
-            if(strCount >= strCountRes)
-                diffSum = 0;
+            //if(strCount >= strCountRes)
+            //    diffSum = 0;
             //SHOW(diffSum);
 			//save first considered currently direction as refernece
             if( currDir == 0 & direction != 0 )
