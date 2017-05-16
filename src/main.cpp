@@ -5,6 +5,11 @@ Aim of this project is to define accuracy and recurrence of used mapping method
 
 #include "main.h"
 
+// TODO :
+//WIZUALIZACJA DZIAŁANIA DO DOMKUNETACJI!
+//Analiza wszystkich map i wyciagniecie sredniej
+//program do liczenia powtarzalnosci
+
 /** @function main */
 int main( int argc, char* argv[] )
 {
@@ -57,6 +62,7 @@ int main( int argc, char* argv[] )
         //that map will be compared with oryginal
         bitwise_not ( edgesRgbMap, edgesRgbMap );
         cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
+        imwrite( "../mod_maps/edges.pgm", edgesRgbMap );//to test
 
         createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 
