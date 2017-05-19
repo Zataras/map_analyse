@@ -62,7 +62,7 @@ int main( int argc, char* argv[] )
         //that map will be compared with oryginal
         bitwise_not ( edgesRgbMap, edgesRgbMap );
         cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
-        imwrite( "../mod_maps/edges.pgm", edgesRgbMap );//to test
+        imwrite( "../maps/edges.pgm", edgesRgbMap );//to test brak edgesRgbMap?
 
         createVecOfMeanLines(srcRgbImg, edgesRgbMap);
 
