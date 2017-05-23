@@ -5,6 +5,8 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 
+#include "boost/program_options.hpp" //input flags handle
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -18,6 +20,7 @@
 
 using namespace cv;
 using namespace std;
+namespace po = boost::program_options;
 
 /// Global variables
 

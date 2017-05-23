@@ -13,7 +13,35 @@ Aim of this project is to define accuracy and recurrence of used mapping method
 /** @function main */
 int main( int argc, char* argv[] )
 {
-	string message;
+    Mat srcRgbImg;
+
+    // Declare the supported options.
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help,h", "produce help message")
+        ("map_name,m", po::value<string>(), "Specifies which map to load [REQUIRED]")
+    ;
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return 1;
+    }
+
+    if (vm.count("map_name")) {
+        cout << "Loaded image from "
+     << vm["map_name"].as<string>() << ".\n";
+        srcRgbImg = imread( vm["map_name"].as<string>());
+    } else {
+        cout << "Map path must be specified.\n";
+        cout << desc << "\n";
+        return -2;
+    }
+
+    string message;
 	/// Load an image
     if (argc < 1)
     {
@@ -22,7 +50,7 @@ int main( int argc, char* argv[] )
     }
     // Mat objects life block
     {
-        Mat srcRgbImg = imread( argv[1] );
+        //Mat srcRgbImg = imread( vm["map_name"].as<string>());//argv[1] );
 
         namedWindow("debug window", WINDOW_AUTOSIZE);//WINDOW_AUTOSIZE);
         setMouseCallback("debug window", onMouse, NULL); //CHECK POINT COORD.
@@ -62,9 +90,14 @@ int main( int argc, char* argv[] )
         //that map will be compared with oryginal
         bitwise_not ( edgesRgbMap, edgesRgbMap );
         cvtColor(edgesRgbMap, edgesRgbMap, CV_GRAY2RGB);
-        imwrite( "../maps/edges.pgm", edgesRgbMap );//to test brak edgesRgbMap?
+
+        //--Save image for presentation-- stage 1: opencv extracts egdes
+        imwrite( "../maps/1_edges.pgm", edgesRgbMap );
 
         createVecOfMeanLines(srcRgbImg, edgesRgbMap);
+
+        //--Save image for presentation-- stage 3: own algorithm pointed mean values for lines
+        imwrite( "../maps/3_.pgm", edgesRgbMap );
 
         //remove last element of VecOfMeanPts
         //because it's being added "in case"
