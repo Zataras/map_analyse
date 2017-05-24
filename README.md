@@ -13,3 +13,5 @@ To install boost-program-options:
 
 Minimum configuration to run:
 	argument from command line with map path, e.g. -m ../maps/mapa.pgm
+
+TEST
